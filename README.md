@@ -1,16 +1,66 @@
-# pokemon_explorer
+# 🔴 Pokémon Explorer
 
-A new Flutter project.
+A premium, high-performance Flutter application built with **Material 3**, **GetX**, and a clean modular architecture. Explore the vast world of Pokémon with a state-of-the-art interface.
 
-## Getting Started
+## 🚀 Key Features
 
-This project is a starting point for a Flutter application.
+-   **Material 3 Adaptive Design**: Seamless experience across Android, iOS, Windows, and macOS.
+-   **Dynamic Navigation**: Intelligent sidebar for desktop and fluid bottom navigation for mobile.
+-   **Advanced State Management**: Powered by GetX for reactive and efficient performance.
+-   **Skeleton Loading**: Premium UX using shimmer effects for a smoother data-fetching experience.
+-   **Internationalization (i18n)**: Fully prepared for multiple languages (Spanish & English included).
+-   **Local Persistence**: Favorites and user settings saved locally using `GetStorage`.
+-   **Clean Architecture**: Strictly organized into Data, Presentation, and Service layers.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠 Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+-   **Framework**: [Flutter](https://flutter.dev/)
+-   **State Management**: [GetX](https://pub.dev/packages/get)
+-   **API Consumption**: [Http](https://pub.dev/packages/http)
+-   **Caching**: [Cached Network Image](https://pub.dev/packages/cached_network_image)
+-   **Storage**: [GetStorage](https://pub.dev/packages/get_storage)
+-   **Design System**: [Material 3](https://m3.material.io/)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📂 Project Structure
+
+```text
+lib/
+├── data/           # Models and Repositories
+├── services/       # Global services (API, Storage)
+├── routes/         # Navigation management
+├── helpers/        # Constants, i18n, utilities
+├── theme/          # M3 Custom Themes (Light/Dark)
+└── presentation/   # UI Modules (Splash, Login, Home, Detail)
+    ├── layouts/    # Adaptive layout wrappers
+    └── common/     # Reusable premium widgets
+```
+
+## 🏁 Getting Started
+
+### Prerequisites
+
+-   Flutter SDK (^3.10.8)
+-   Dart SDK (^3.10.8)
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/derlisdev/POKEMON.git
+    ```
+2.  Navigate to the project folder:
+    ```bash
+    cd pokemon_explorer
+    ```
+3.  Install dependencies:
+    ```bash
+    flutter pub get
+    ```
+4.  Run the application:
+    ```bash
+    flutter run
+    ```
+
+---
+
+*Built with ❤️ by derlisdev*
