@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import '../presentation/login/login_binding.dart';
-import '../presentation/login/login_page.dart';
-import '../presentation/splash/splash_binding.dart';
-import '../presentation/splash/splash_page.dart';
+import 'package:pokemon_explorer/presentation/home/home_binding.dart';
+import 'package:pokemon_explorer/presentation/home/home_page.dart';
+import 'package:pokemon_explorer/presentation/login/login_binding.dart';
+import 'package:pokemon_explorer/presentation/login/login_page.dart';
+import 'package:pokemon_explorer/presentation/splash/splash_binding.dart';
+import 'package:pokemon_explorer/presentation/splash/splash_page.dart';
+import 'package:pokemon_explorer/routes/auth_middleware.dart';
 
 class AppRoutes {
   static const String SPLASH = '/';
@@ -24,10 +27,11 @@ class AppPages {
       page: () => const LoginPage(),
       binding: LoginBinding(),
     ),
-    // Placeholder for HOME to test navigation
     GetPage(
       name: AppRoutes.HOME,
-      page: () => const Center(child: Text('Home')),
+      page: () => const HomePage(),
+      binding: HomeBinding(),
+      middlewares: [AuthMiddleware()],
     ),
   ];
 }
