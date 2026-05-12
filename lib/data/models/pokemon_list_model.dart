@@ -14,10 +14,17 @@ class PokemonListItemModel {
     );
   }
 
-  // Extract ID from URL to get the high-res image
-  String get id {
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'url': url,
+    };
+  }
+
+  // Extract ID from URL as integer
+  int get id {
     final parts = url.split('/');
-    return parts[parts.length - 2];
+    return int.parse(parts[parts.length - 2]);
   }
 
   String get imageUrl =>

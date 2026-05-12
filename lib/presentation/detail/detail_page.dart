@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
 import 'package:pokemon_explorer/helpers/app_colors.dart';
 import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
+import 'package:pokemon_explorer/services/favorites_service.dart';
 import 'detail_controller.dart';
 
 class DetailPage extends GetView<DetailController> {
@@ -54,6 +55,21 @@ class DetailPage extends GetView<DetailController> {
                     onPressed: () => Get.back(),
                   ),
                 ),
+                Positioned(
+                  top: 40,
+                  right: 40,
+                  child: Obx(() {
+                    final isFav = FavoritesService.to.isFavorite(pokemon.id);
+                    return IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.white,
+                        size: 35,
+                      ),
+                      onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
+                    );
+                  }),
+                ),
               ],
             ),
           ),
@@ -99,6 +115,18 @@ class DetailPage extends GetView<DetailController> {
                 ],
               ),
             ),
+            actions: [
+              Obx(() {
+                final isFav = FavoritesService.to.isFavorite(pokemon.id);
+                return IconButton(
+                  icon: Icon(
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: isFav ? Colors.red : Colors.white,
+                  ),
+                  onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
+                );
+              }),
+            ],
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -108,7 +136,7 @@ class DetailPage extends GetView<DetailController> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(25, 25, 25, 0),
+                padding: const EdgeInsets.fromLTRB(25, 45, 25, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -5,6 +5,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
+import 'package:pokemon_explorer/services/favorites_service.dart';
 import 'home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -217,6 +218,20 @@ class HomePage extends GetView<HomeController> {
                       size: 100,
                       color: Colors.white.withOpacity(0.12),
                     ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Obx(() {
+                      final isFavorite = FavoritesService.to.isFavorite(pokemon.id);
+                      return IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
+                      );
+                    }),
                   ),
                   Center(
                     child: Hero(
