@@ -1,0 +1,49 @@
+import 'package:get/get.dart';
+
+class AppTranslations extends Translations {
+  @override
+  Map<String, Map<String, String>> get keys => {
+        'en_US': {
+          'app_name': 'Pokémon Explorer',
+          'login': 'Login',
+          'user': 'Username',
+          'password': 'Password',
+          'invalid_credentials': 'Invalid credentials',
+          'home': 'Pokédex',
+          'search': 'Search Pokémon...',
+          'favorites': 'Favorites',
+          'settings': 'Settings',
+          'theme': 'Theme',
+          'language': 'Language',
+          'height': 'Height',
+          'weight': 'Weight',
+          'stats': 'Stats',
+          'abilities': 'Abilities',
+          'types': 'Types',
+          'no_results': 'No Pokémon found',
+          'error_network': 'Network error, please try again',
+          'retry': 'Retry',
+        },
+        'es_ES': {
+          'app_name': 'Explorador Pokémon',
+          'login': 'Iniciar Sesión',
+          'user': 'Usuario',
+          'password': 'Contraseña',
+          'invalid_credentials': 'Credenciales inválidas',
+          'home': 'Pokédex',
+          'search': 'Buscar Pokémon...',
+          'favorites': 'Favoritos',
+          'settings': 'Ajustes',
+          'theme': 'Tema',
+          'language': 'Idioma',
+          'height': 'Altura',
+          'weight': 'Peso',
+          'stats': 'Estadísticas',
+          'abilities': 'Habilidades',
+          'types': 'Tipos',
+          'no_results': 'No se encontraron Pokémon',
+          'error_network': 'Error de red, intenta de nuevo',
+          'retry': 'Reintentar',
+        },
+      };
+}
