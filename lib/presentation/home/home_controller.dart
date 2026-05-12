@@ -16,12 +16,45 @@ class HomeController extends GetxController {
         invisibleItemsThreshold: 3,
       );
 
+  // Search related
+  final allPokemon = <PokemonListItemModel>[].obs;
+  final filteredPokemon = <PokemonListItemModel>[].obs;
+  final isSearching = false.obs;
+  final searchText = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
+    _loadAllPokemon(); // Load for search
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+  }
+
+  // Load all pokemon names once for instant local search
+  Future<void> _loadAllPokemon() async {
+    try {
+      final response = await _repository.getPokemonList(offset: 0, limit: 2000);
+      allPokemon.assignAll(response.results);
+    } catch (e) {
+      print('Error loading search data: $e');
+    }
+  }
+
+  void onSearchChanged(String text) {
+    searchText.value = text;
+    if (text.isEmpty) {
+      isSearching.value = false;
+      filteredPokemon.clear();
+    } else {
+      isSearching.value = true;
+      filteredPokemon.assignAll(
+        allPokemon.where((p) => 
+          p.name.toLowerCase().contains(text.toLowerCase()) || 
+          p.id.toString().contains(text)
+        ).toList(),
+      );
+    }
   }
 
   Future<void> _fetchPage(int pageKey) async {
