@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:pokemon_explorer/helpers/dependency_injection.dart';
 import 'package:pokemon_explorer/helpers/translations.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
-import 'package:pokemon_explorer/services/auth_service.dart';
-import 'package:pokemon_explorer/services/global_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Storage
-  await GetStorage.init();
+  // High-level dependency initialization
+  await DependencyInjection.init();
   
-  // Initialize Services
-  await Get.putAsync(() => GlobalService().init());
-  await Get.putAsync(() => AuthService().init());
-  final settingsService = await Get.putAsync(() => SettingsService().init());
-  
-  runApp(MyApp(settingsService: settingsService));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final SettingsService settingsService;
-  
-  const MyApp({super.key, required this.settingsService});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final settingsService = Get.find<SettingsService>();
+    
     return GetMaterialApp(
       title: 'app_name'.tr,
       debugShowCheckedModeBanner: false,
@@ -47,15 +40,8 @@ class MyApp extends StatelessWidget {
       getPages: AppPages.routes,
       initialRoute: AppRoutes.SPLASH,
       
-      // Default transition for premium feel
+      // Global configuration
       defaultTransition: Transition.cupertino,
-      
-      // Temp home until Splash is implemented
-      home: Scaffold(
-        body: Center(
-          child: Text('app_name'.tr, style: const TextStyle(fontSize: 24)),
-        ),
-      ),
     );
   }
 }
