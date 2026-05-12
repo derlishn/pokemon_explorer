@@ -12,12 +12,12 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    // Responsive column calculation
     final width = MediaQuery.of(context).size.width;
     final int crossAxisCount = width > 1200 ? 6 : (width > 600 ? 4 : 2);
 
     return Scaffold(
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             expandedHeight: 120.0,
@@ -54,23 +54,20 @@ class HomePage extends GetView<HomeController> {
               builderDelegate: PagedChildBuilderDelegate<PokemonListItemModel>(
                 itemBuilder: (context, item, index) => AnimationConfiguration.staggeredGrid(
                   position: index,
-                  duration: const Duration(milliseconds: 375),
+                  duration: const Duration(milliseconds: 600),
                   columnCount: crossAxisCount,
-                  child: ScaleAnimation(
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
                     child: FadeInAnimation(
                       child: _buildPokemonCard(context, item),
                     ),
                   ),
                 ),
-                firstPageProgressIndicatorBuilder: (_) => const SliverToBoxAdapter(
-                  child: Center(child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: CircularProgressIndicator(),
-                  )),
-                ),
+                // Optimized skeleton loading to avoid MouseTracker issues
+                firstPageProgressIndicatorBuilder: (_) => _buildSkeletonLoading(context, crossAxisCount),
                 newPageProgressIndicatorBuilder: (_) => const Center(
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(32.0),
                     child: CircularProgressIndicator(),
                   ),
                 ),
@@ -82,10 +79,60 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
+  // Use a simple Column of Rows instead of GridView.shrinkWrap to avoid layout confusion
+  Widget _buildSkeletonLoading(BuildContext context, int crossAxisCount) {
+    return Column(
+      children: List.generate(3, (rowIndex) => Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          children: List.generate(crossAxisCount, (colIndex) => Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: colIndex == crossAxisCount - 1 ? 0 : 16,
+              ),
+              child: _buildSkeletonCard(context),
+            ),
+          )),
+        ),
+      )),
+    );
+  }
+
+  Widget _buildSkeletonCard(BuildContext context) {
+    final color = Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3);
+    return AspectRatio(
+      aspectRatio: 0.85,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Icon(Icons.catching_pokemon, size: 60, color: color.withOpacity(0.5)),
+              ),
+            ),
+            Container(
+              height: 40,
+              width: double.infinity,
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPokemonCard(BuildContext context, PokemonListItemModel pokemon) {
     return Card(
       elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
@@ -103,7 +150,7 @@ class HomePage extends GetView<HomeController> {
                     child: Icon(
                       Icons.catching_pokemon,
                       size: 100,
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withOpacity(0.12),
                     ),
                   ),
                   Center(
@@ -113,7 +160,9 @@ class HomePage extends GetView<HomeController> {
                         imageUrl: pokemon.imageUrl,
                         height: 120,
                         fit: BoxFit.contain,
-                        placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                         errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
                     ),
@@ -125,7 +174,7 @@ class HomePage extends GetView<HomeController> {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
               ),
               child: Text(
                 pokemon.name.capitalizeFirst!,
