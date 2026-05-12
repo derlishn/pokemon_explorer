@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pokemon_explorer/helpers/translations.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
+import 'package:pokemon_explorer/services/auth_service.dart';
 import 'package:pokemon_explorer/services/global_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/theme/app_theme.dart';
@@ -15,6 +16,7 @@ void main() async {
   
   // Initialize Services
   await Get.putAsync(() => GlobalService().init());
+  await Get.putAsync(() => AuthService().init());
   final settingsService = await Get.putAsync(() => SettingsService().init());
   
   runApp(MyApp(settingsService: settingsService));
