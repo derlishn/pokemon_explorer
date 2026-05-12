@@ -7,6 +7,7 @@ import 'package:pokemon_explorer/presentation/login/login_binding.dart';
 import 'package:pokemon_explorer/presentation/login/login_page.dart';
 import 'package:pokemon_explorer/presentation/splash/splash_binding.dart';
 import 'package:pokemon_explorer/presentation/splash/splash_page.dart';
+import 'package:pokemon_explorer/presentation/favorites/favorites_page.dart';
 import 'package:pokemon_explorer/routes/auth_middleware.dart';
 
 class AppRoutes {
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String LOGIN = '/login';
   static const String HOME = '/home';
   static const String DETAIL = '/detail';
+  static const String FAVORITES = '/favorites';
 }
 
 class AppPages {
@@ -38,6 +40,10 @@ class AppPages {
       name: AppRoutes.DETAIL,
       page: () => const DetailPage(),
       binding: DetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FAVORITES,
+      page: () => const FavoritesPage(),
     ),
   ];
 }

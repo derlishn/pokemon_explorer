@@ -66,7 +66,7 @@ class DetailPage extends GetView<DetailController> {
                         color: isFav ? Colors.red : Colors.white,
                         size: 35,
                       ),
-                      onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
+                      onPressed: () => FavoritesService.to.toggleFavorite(controller.initialData),
                     );
                   }),
                 ),
@@ -123,7 +123,7 @@ class DetailPage extends GetView<DetailController> {
                     isFav ? Icons.favorite : Icons.favorite_border,
                     color: isFav ? Colors.red : Colors.white,
                   ),
-                  onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
+                  onPressed: () => FavoritesService.to.toggleFavorite(controller.initialData),
                 );
               }),
             ],

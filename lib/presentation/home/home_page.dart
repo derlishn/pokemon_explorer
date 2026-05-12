@@ -5,7 +5,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
-import 'package:pokemon_explorer/services/favorites_service.dart';
 import 'home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -46,6 +45,11 @@ class HomePage extends GetView<HomeController> {
               titlePadding: const EdgeInsets.only(left: 20, bottom: 85),
             ),
             actions: [
+              TextButton.icon(
+                icon: const Icon(Icons.favorite, size: 20, color: Colors.red),
+                label: Text('favorites'.tr, style: const TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () => Get.toNamed('/favorites'),
+              ),
               IconButton(
                 icon: const Icon(Icons.logout_rounded),
                 onPressed: () => AuthService.to.logout(),
@@ -219,20 +223,6 @@ class HomePage extends GetView<HomeController> {
                       color: Colors.white.withOpacity(0.12),
                     ),
                   ),
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: Obx(() {
-                      final isFavorite = FavoritesService.to.isFavorite(pokemon.id);
-                      return IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
-                        ),
-                        onPressed: () => FavoritesService.to.toggleFavorite(pokemon.id),
-                      );
-                    }),
-                  ),
                   Center(
                     child: Hero(
                       tag: 'pokemon_${pokemon.id}',
@@ -240,10 +230,6 @@ class HomePage extends GetView<HomeController> {
                         imageUrl: pokemon.imageUrl,
                         height: 120,
                         fit: BoxFit.contain,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
                     ),
                   ),

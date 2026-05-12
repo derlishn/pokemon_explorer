@@ -60,16 +60,11 @@ class HomeController extends GetxController {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final response = await _repository.getPokemonList(
-        offset: pageKey, 
+        offset: pageKey,
         limit: _pageSize,
       );
-      
-      // ESCUDO DE SEGURIDAD: 
-      // Si el controlador se cerró durante la petición de red, cancelamos la actualización.
-      if (isClosed) return;
 
-      final isLastPage = response.next == null;
-      
+      final isLastPage = response.results.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(response.results);
       } else {
@@ -77,20 +72,12 @@ class HomeController extends GetxController {
         pagingController.appendPage(response.results, nextPageKey);
       }
     } catch (error) {
-      // Verificamos de nuevo antes de reportar un error
-      if (!isClosed) {
-        pagingController.error = error;
-      }
+      pagingController.error = error;
     }
-  }
-
-  void refreshData() {
-    pagingController.refresh();
   }
 
   @override
   void onClose() {
-    // Primero marcamos como cerrado y luego liberamos la memoria
     pagingController.dispose();
     super.onClose();
   }
