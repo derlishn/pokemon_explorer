@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/presentation/home/home_binding.dart';
 import 'package:pokemon_explorer/presentation/home/home_page.dart';

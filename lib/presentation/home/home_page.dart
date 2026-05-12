@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
 import 'home_controller.dart';
 
@@ -10,110 +12,133 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    // Responsive column calculation
+    final width = MediaQuery.of(context).size.width;
+    final int crossAxisCount = width > 1200 ? 6 : (width > 600 ? 4 : 2);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('home'.tr),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => AuthService.to.logout(),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120.0,
+            floating: true,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'home'.tr,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: false,
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout_rounded),
+                onPressed: () => AuthService.to.logout(),
+              ),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: PagedSliverGrid<int, PokemonListItemModel>(
+              pagingController: controller.pagingController,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.85,
+              ),
+              builderDelegate: PagedChildBuilderDelegate<PokemonListItemModel>(
+                itemBuilder: (context, item, index) => AnimationConfiguration.staggeredGrid(
+                  position: index,
+                  duration: const Duration(milliseconds: 375),
+                  columnCount: crossAxisCount,
+                  child: ScaleAnimation(
+                    child: FadeInAnimation(
+                      child: _buildPokemonCard(context, item),
+                    ),
+                  ),
+                ),
+                firstPageProgressIndicatorBuilder: (_) => const SliverToBoxAdapter(
+                  child: Center(child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: CircularProgressIndicator(),
+                  )),
+                ),
+                newPageProgressIndicatorBuilder: (_) => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      body: controller.obx(
-        (state) => _buildGrid(state!),
-        onLoading: _buildSkeleton(),
-        onError: (error) => _buildError(error),
-      ),
     );
   }
 
-  Widget _buildGrid(List<dynamic> pokemons) {
-    return AdaptiveLayout(
-      mobile: _buildGridView(pokemons, 2),
-      tablet: _buildGridView(pokemons, 4),
-      desktop: _buildGridView(pokemons, 6),
-    );
-  }
-
-  Widget _buildGridView(List<dynamic> pokemons, int crossAxisCount) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.8,
-      ),
-      itemCount: pokemons.length,
-      itemBuilder: (context, index) {
-        final pokemon = pokemons[index];
-        return _buildPokemonCard(context, pokemon);
-      },
-    );
-  }
-
-  Widget _buildPokemonCard(BuildContext context, dynamic pokemon) {
+  Widget _buildPokemonCard(BuildContext context, PokemonListItemModel pokemon) {
     return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: InkWell(
         onTap: () => Get.toNamed('/detail', arguments: pokemon),
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Hero(
-                  tag: pokemon.id,
-                  child: CachedNetworkImage(
-                    imageUrl: pokemon.imageUrl,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -10,
+                    bottom: -10,
+                    child: Icon(
+                      Icons.catching_pokemon,
+                      size: 100,
+                      color: Colors.white.withOpacity(0.15),
                     ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
-                ),
+                  Center(
+                    child: Hero(
+                      tag: 'pokemon_${pokemon.id}',
+                      child: CachedNetworkImage(
+                        imageUrl: pokemon.imageUrl,
+                        height: 120,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+              ),
               child: Text(
-                pokemon.name.toUpperCase(),
-                style: const TextStyle(
+                pokemon.name.capitalizeFirst!,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
                 ),
+                textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSkeleton() {
-    return const Center(child: CircularProgressIndicator()); // Will improve with flutter_shimmer later
-  }
-
-  Widget _buildError(String? error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
-          Text(error ?? 'error_network'.tr),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => controller.fetchPokemon(),
-            child: Text('retry'.tr),
-          ),
-        ],
       ),
     );
   }

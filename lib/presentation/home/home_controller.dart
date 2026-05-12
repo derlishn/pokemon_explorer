@@ -1,44 +1,53 @@
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
 
-class HomeController extends GetxController with StateMixin<List<PokemonListItemModel>> {
+class HomeController extends GetxController {
   final IPokemonRepository _repository;
   
   HomeController(this._repository);
 
-  final RxList<PokemonListItemModel> pokemonList = <PokemonListItemModel>[].obs;
-  int _currentOffset = 0;
-  bool _hasMore = true;
+  static const int _pageSize = 20;
+
+  final PagingController<int, PokemonListItemModel> pagingController = 
+      PagingController(firstPageKey: 0);
 
   @override
   void onInit() {
     super.onInit();
-    fetchPokemon();
+    pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
   }
 
-  Future<void> fetchPokemon() async {
-    if (_currentOffset == 0) change(null, status: RxStatus.loading());
-
+  Future<void> _fetchPage(int pageKey) async {
     try {
-      final response = await _repository.getPokemonList(offset: _currentOffset);
+      final response = await _repository.getPokemonList(
+        offset: pageKey, 
+        limit: _pageSize,
+      );
       
-      if (response.results.isEmpty && _currentOffset == 0) {
-        change([], status: RxStatus.empty());
+      final isLastPage = response.next == null;
+      
+      if (isLastPage) {
+        pagingController.appendLastPage(response.results);
       } else {
-        pokemonList.addAll(response.results);
-        _currentOffset += response.results.length;
-        _hasMore = response.next != null;
-        change(pokemonList, status: RxStatus.success());
+        final nextPageKey = pageKey + response.results.length;
+        pagingController.appendPage(response.results, nextPageKey);
       }
-    } catch (e) {
-      change(null, status: RxStatus.error(e.toString()));
+    } catch (error) {
+      pagingController.error = error;
     }
   }
 
-  Future<void> loadMore() async {
-    if (_hasMore) {
-      await fetchPokemon();
-    }
+  void refreshData() {
+    pagingController.refresh();
+  }
+
+  @override
+  void onClose() {
+    pagingController.dispose();
+    super.onClose();
   }
 }

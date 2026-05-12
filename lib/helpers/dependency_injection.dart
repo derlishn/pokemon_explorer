@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../services/auth_service.dart';
-import '../services/global_service.dart';
-import '../services/settings_service.dart';
+import 'package:pokemon_explorer/services/auth_service.dart';
+import 'package:pokemon_explorer/services/global_service.dart';
+import 'package:pokemon_explorer/services/settings_service.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
