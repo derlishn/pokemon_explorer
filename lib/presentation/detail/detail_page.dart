@@ -15,8 +15,8 @@ class DetailPage extends GetView<DetailController> {
     return Scaffold(
       body: controller.obx(
         (state) => AdaptiveLayout(
-          mobile: _buildMobileLayout(context, state!),
-          desktop: _buildDesktopLayout(context, state!),
+          mobile: _buildMobileLayout(context, state),
+          desktop: _buildDesktopLayout(context, state),
         ),
         onLoading: const Center(child: CircularProgressIndicator()),
         onError: (error) => Center(child: Text(error ?? 'Error')),
@@ -25,7 +25,8 @@ class DetailPage extends GetView<DetailController> {
   }
 
   // --- DESKTOP LAYOUT (Split View) ---
-  Widget _buildDesktopLayout(BuildContext context, PokemonDetailModel pokemon) {
+  Widget _buildDesktopLayout(BuildContext context, PokemonDetailModel? pokemon) {
+    if (pokemon == null) return const SizedBox.shrink();
     final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
     
     return Row(
@@ -86,7 +87,8 @@ class DetailPage extends GetView<DetailController> {
   }
 
   // --- MOBILE LAYOUT (NestedScrollView) ---
-  Widget _buildMobileLayout(BuildContext context, PokemonDetailModel pokemon) {
+  Widget _buildMobileLayout(BuildContext context, PokemonDetailModel? pokemon) {
+    if (pokemon == null) return const SizedBox.shrink();
     final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
 
     return DefaultTabController(

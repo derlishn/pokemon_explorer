@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
-import 'package:pokemon_explorer/services/auth_service.dart';
 import 'home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -51,8 +50,8 @@ class HomePage extends GetView<HomeController> {
                 onPressed: () => Get.toNamed('/favorites'),
               ),
               IconButton(
-                icon: const Icon(Icons.logout_rounded),
-                onPressed: () => AuthService.to.logout(),
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: () => Get.toNamed('/settings'),
               ),
             ],
           ),
