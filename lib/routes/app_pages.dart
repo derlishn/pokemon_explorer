@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:pokemon_explorer/presentation/detail/detail_binding.dart';
+import 'package:pokemon_explorer/presentation/detail/detail_page.dart';
 import 'package:pokemon_explorer/presentation/home/home_binding.dart';
 import 'package:pokemon_explorer/presentation/home/home_page.dart';
 import 'package:pokemon_explorer/presentation/login/login_binding.dart';
@@ -31,6 +33,11 @@ class AppPages {
       page: () => const HomePage(),
       binding: HomeBinding(),
       middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.DETAIL,
+      page: () => const DetailPage(),
+      binding: DetailBinding(),
     ),
   ];
 }
