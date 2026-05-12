@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../helpers/constants.dart';
+import 'package:pokemon_explorer/helpers/constants.dart';
 
 class SettingsService extends GetxService {
   final _box = GetStorage();

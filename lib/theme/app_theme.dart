@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
+import 'package:pokemon_explorer/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData get light => _buildTheme(Brightness.light);
@@ -14,7 +14,6 @@ class AppTheme {
       primary: AppColors.primary,
       secondary: AppColors.secondary,
       surface: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      background: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
     );
 
     return ThemeData(
@@ -33,7 +32,7 @@ class AppTheme {
           color: isDark ? Colors.white : Colors.black87,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),

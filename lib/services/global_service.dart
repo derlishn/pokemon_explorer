@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../helpers/constants.dart';
+import 'package:pokemon_explorer/helpers/constants.dart';
 
 class GlobalService extends GetxService {
   final http.Client _client = http.Client();

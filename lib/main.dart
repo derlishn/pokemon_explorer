@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'helpers/translations.dart';
-import 'routes/app_pages.dart';
-import 'services/global_service.dart';
-import 'services/settings_service.dart';
-import 'theme/app_theme.dart';
+import 'package:pokemon_explorer/helpers/translations.dart';
+import 'package:pokemon_explorer/routes/app_pages.dart';
+import 'package:pokemon_explorer/services/global_service.dart';
+import 'package:pokemon_explorer/services/settings_service.dart';
+import 'package:pokemon_explorer/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
