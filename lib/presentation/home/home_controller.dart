@@ -11,7 +11,10 @@ class HomeController extends GetxController {
   static const int _pageSize = 20;
 
   final PagingController<int, PokemonListItemModel> pagingController = 
-      PagingController(firstPageKey: 0);
+      PagingController(
+        firstPageKey: 0,
+        invisibleItemsThreshold: 3,
+      );
 
   @override
   void onInit() {
@@ -28,6 +31,10 @@ class HomeController extends GetxController {
         limit: _pageSize,
       );
       
+      // ESCUDO DE SEGURIDAD: 
+      // Si el controlador se cerró durante la petición de red, cancelamos la actualización.
+      if (isClosed) return;
+
       final isLastPage = response.next == null;
       
       if (isLastPage) {
@@ -37,7 +44,10 @@ class HomeController extends GetxController {
         pagingController.appendPage(response.results, nextPageKey);
       }
     } catch (error) {
-      pagingController.error = error;
+      // Verificamos de nuevo antes de reportar un error
+      if (!isClosed) {
+        pagingController.error = error;
+      }
     }
   }
 
@@ -47,6 +57,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    // Primero marcamos como cerrado y luego liberamos la memoria
     pagingController.dispose();
     super.onClose();
   }

@@ -17,7 +17,8 @@ class HomePage extends GetView<HomeController> {
 
     return Scaffold(
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        // Rígido para evitar estiramientos al vacío
+        physics: const ClampingScrollPhysics(),
         slivers: [
           SliverAppBar(
             expandedHeight: 120.0,
@@ -41,35 +42,36 @@ class HomePage extends GetView<HomeController> {
               ),
             ],
           ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: PagedSliverGrid<int, PokemonListItemModel>(
-              pagingController: controller.pagingController,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<PokemonListItemModel>(
-                itemBuilder: (context, item, index) => AnimationConfiguration.staggeredGrid(
-                  position: index,
-                  duration: const Duration(milliseconds: 600),
-                  columnCount: crossAxisCount,
-                  child: SlideAnimation(
-                    verticalOffset: 50.0,
-                    child: FadeInAnimation(
-                      child: _buildPokemonCard(context, item),
-                    ),
+          
+          // Usamos un Builder para decidir si mostrar el Grid o el Cargador de pantalla completa
+          // Esto evita que el usuario haga scroll hacia el "vacío" mientras no hay datos.
+          PagedSliverGrid<int, PokemonListItemModel>(
+            pagingController: controller.pagingController,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.85,
+            ),
+            builderDelegate: PagedChildBuilderDelegate<PokemonListItemModel>(
+              itemBuilder: (context, item, index) => AnimationConfiguration.staggeredGrid(
+                position: index,
+                duration: const Duration(milliseconds: 600),
+                columnCount: crossAxisCount,
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: _buildPokemonCard(context, item),
                   ),
                 ),
-                // Optimized skeleton loading to avoid MouseTracker issues
-                firstPageProgressIndicatorBuilder: (_) => _buildSkeletonLoading(context, crossAxisCount),
-                newPageProgressIndicatorBuilder: (_) => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: CircularProgressIndicator(),
-                  ),
+              ),
+              // IMPORTANTE: El cargador de la primera página no permite scroll
+              // Ocupa todo el espacio restante de la pantalla.
+              firstPageProgressIndicatorBuilder: (context) => _buildFullScreenLoading(context, crossAxisCount),
+              newPageProgressIndicatorBuilder: (_) => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: CircularProgressIndicator(),
                 ),
               ),
             ),
@@ -79,52 +81,50 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
-  // Use a simple Column of Rows instead of GridView.shrinkWrap to avoid layout confusion
-  Widget _buildSkeletonLoading(BuildContext context, int crossAxisCount) {
-    return Column(
-      children: List.generate(3, (rowIndex) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: Row(
-          children: List.generate(crossAxisCount, (colIndex) => Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: colIndex == crossAxisCount - 1 ? 0 : 16,
-              ),
-              child: _buildSkeletonCard(context),
-            ),
-          )),
+  // Crea una estructura que llena la pantalla y evita el scroll al vacío
+  Widget _buildFullScreenLoading(BuildContext context, int crossAxisCount) {
+    return Container(
+      // Forzamos que ocupe al menos la altura de la pantalla menos el AppBar
+      height: MediaQuery.of(context).size.height - 150,
+      padding: const EdgeInsets.all(16),
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(), // Bloqueamos scroll interno
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.85,
         ),
-      )),
+        itemCount: 8, // Suficientes para llenar la pantalla inicial
+        itemBuilder: (context, index) => _buildSkeletonCard(context),
+      ),
     );
   }
 
   Widget _buildSkeletonCard(BuildContext context) {
     final color = Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3);
-    return AspectRatio(
-      aspectRatio: 0.85,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Icon(Icons.catching_pokemon, size: 60, color: color.withOpacity(0.5)),
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Icon(Icons.catching_pokemon, size: 60, color: color.withOpacity(0.5)),
             ),
-            Container(
-              height: 40,
-              width: double.infinity,
-              margin: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
+          ),
+          Container(
+            height: 25,
+            width: double.infinity,
+            margin: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
