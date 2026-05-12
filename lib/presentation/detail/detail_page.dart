@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
 import 'package:pokemon_explorer/helpers/app_colors.dart';
+import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
 import 'detail_controller.dart';
 
 class DetailPage extends GetView<DetailController> {
@@ -11,202 +12,342 @@ class DetailPage extends GetView<DetailController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: controller.obx(
-        (state) => _buildDetail(context, state!),
-        onLoading: _buildLoading(context),
-        onError: (error) => _buildError(context, error),
+        (state) => AdaptiveLayout(
+          mobile: _buildMobileLayout(context, state!),
+          desktop: _buildDesktopLayout(context, state!),
+        ),
+        onLoading: const Center(child: CircularProgressIndicator()),
+        onError: (error) => Center(child: Text(error ?? 'Error')),
       ),
     );
   }
 
-  Widget _buildDetail(BuildContext context, PokemonDetailModel pokemon) {
-    final primaryType = pokemon.types.first.name;
-    final themeColor = AppColors.getTypeColor(primaryType);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          expandedHeight: 300,
-          pinned: true,
-          backgroundColor: themeColor,
-          foregroundColor: Colors.white, // Keep back button white for contrast
-          flexibleSpace: FlexibleSpaceBar(
-            background: Stack(
+  // --- DESKTOP LAYOUT (Split View) ---
+  Widget _buildDesktopLayout(BuildContext context, PokemonDetailModel pokemon) {
+    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    
+    return Row(
+      children: [
+        Expanded(
+          flex: 4,
+          child: Container(
+            color: themeColor,
+            child: Stack(
               children: [
-                Positioned(
-                  right: -20,
-                  bottom: -20,
-                  child: Icon(
-                    Icons.catching_pokemon,
-                    size: 250,
-                    color: Colors.white.withOpacity(0.2),
-                  ),
-                ),
+                _buildRotatingPokeball(context, size: 600, opacity: 0.1),
                 Center(
                   child: Hero(
                     tag: 'pokemon_${pokemon.id}',
                     child: CachedNetworkImage(
                       imageUrl: pokemon.imageUrl,
-                      height: 200,
+                      width: 450,
                       fit: BoxFit.contain,
                     ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  left: 40,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+                    onPressed: () => Get.back(),
                   ),
                 ),
               ],
             ),
           ),
         ),
-        SliverToBoxAdapter(
+        Expanded(
+          flex: 6,
           child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(32),
-                topRight: Radius.circular(32),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        pokemon.name.toUpperCase(),
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Text(
-                        pokemon.formattedId,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTypeBadges(pokemon),
-                  const SizedBox(height: 24),
-                  _buildAbout(context, pokemon),
-                  const SizedBox(height: 24),
-                  Text(
-                    'base_stats'.tr,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStats(context, pokemon),
-                ],
-              ),
-            ),
+            color: Theme.of(context).colorScheme.background,
+            child: _buildInfoContent(context, pokemon, isDesktop: true),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTypeBadges(PokemonDetailModel pokemon) {
-    return Wrap(
-      spacing: 8,
-      children: pokemon.types
-          .map((t) => Chip(
-                label: Text(t.name.toUpperCase(), style: const TextStyle(color: Colors.white)),
-                backgroundColor: AppColors.getTypeColor(t.name),
-                side: BorderSide.none,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ))
-          .toList(),
-    );
-  }
+  // --- MOBILE LAYOUT (NestedScrollView) ---
+  Widget _buildMobileLayout(BuildContext context, PokemonDetailModel pokemon) {
+    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
 
-  Widget _buildAbout(BuildContext context, PokemonDetailModel pokemon) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildInfoColumn(context, 'weight'.tr, '${pokemon.weight / 10} kg', Icons.monitor_weight),
-        _buildInfoColumn(context, 'height'.tr, '${pokemon.height / 10} m', Icons.height),
-      ],
-    );
-  }
-
-  Widget _buildInfoColumn(BuildContext context, String label, String value, IconData icon) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 20, color: onSurface.withOpacity(0.6)),
-            const SizedBox(width: 8),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: onSurface.withOpacity(0.5), fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildStats(BuildContext context, PokemonDetailModel pokemon) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    return Column(
-      children: pokemon.stats
-          .map((s) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: Row(
+    return DefaultTabController(
+      length: 3,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            backgroundColor: themeColor,
+            elevation: 0,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                children: [
+                  _buildRotatingPokeball(context, size: 300, opacity: 0.2),
+                  Center(
+                    child: Hero(
+                      tag: 'pokemon_${pokemon.id}',
+                      child: CachedNetworkImage(
+                        imageUrl: pokemon.imageUrl,
+                        height: 200,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              transform: Matrix4.translationValues(0, -30, 0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 25, 25, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        s.name.toUpperCase(), 
-                        style: TextStyle(color: onSurface.withOpacity(0.6), fontSize: 12),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        s.value.toString(), 
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: s.value / 150,
-                          backgroundColor: onSurface.withOpacity(0.1),
-                          color: AppColors.getTypeColor(pokemon.types.first.name),
-                          minHeight: 8,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          pokemon.name.toUpperCase(),
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                      ),
+                        Text(
+                          pokemon.formattedId,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 10),
+                    _buildTypeBadges(pokemon),
+                    const SizedBox(height: 25),
                   ],
                 ),
-              ))
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SliverTabDelegate(
+              TabBar(
+                labelColor: Theme.of(context).colorScheme.onSurface,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: themeColor,
+                indicatorWeight: 4,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Tab(text: 'about'.tr),
+                  Tab(text: 'base_stats'.tr),
+                  Tab(text: 'abilities'.tr),
+                ],
+              ),
+              Theme.of(context).colorScheme.surface,
+            ),
+          ),
+        ],
+        body: Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: TabBarView(
+            children: [
+              _buildAboutTab(context, pokemon),
+              _buildStatsTab(context, pokemon),
+              _buildAbilitiesTab(context, pokemon),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- SHARED INFO CONTENT (For Desktop) ---
+  Widget _buildInfoContent(BuildContext context, PokemonDetailModel pokemon, {bool isDesktop = false}) {
+    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    return DefaultTabController(
+      length: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  pokemon.name.toUpperCase(),
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  pokemon.formattedId,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            _buildTypeBadges(pokemon),
+            const SizedBox(height: 35),
+            TabBar(
+              labelColor: Theme.of(context).colorScheme.onSurface,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: themeColor,
+              indicatorWeight: 4,
+              tabs: [
+                Tab(text: 'about'.tr),
+                Tab(text: 'base_stats'.tr),
+                Tab(text: 'abilities'.tr),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildAboutTab(context, pokemon),
+                  _buildStatsTab(context, pokemon),
+                  _buildAbilitiesTab(context, pokemon),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- TABS CONTENT ---
+  Widget _buildAboutTab(BuildContext context, PokemonDetailModel pokemon) {
+    return ListView(
+      padding: const EdgeInsets.all(25),
+      children: [
+        _buildInfoRow('height'.tr, '${pokemon.height / 10} m', Icons.height),
+        _buildDivider(),
+        _buildInfoRow('weight'.tr, '${pokemon.weight / 10} kg', Icons.monitor_weight),
+      ],
+    );
+  }
+
+  Widget _buildStatsTab(BuildContext context, PokemonDetailModel pokemon) {
+    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    return ListView(
+      padding: const EdgeInsets.all(25),
+      children: pokemon.stats
+          .map((s) => _buildStatBar(context, s.name, s.value, themeColor))
           .toList(),
     );
   }
 
-  Widget _buildLoading(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
+  Widget _buildAbilitiesTab(BuildContext context, PokemonDetailModel pokemon) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(25),
+      itemCount: pokemon.abilities.length,
+      itemBuilder: (context, index) => Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        elevation: 0,
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+        child: ListTile(
+          leading: const Icon(Icons.bolt),
+          title: Text(pokemon.abilities[index].name.capitalizeFirst!),
+        ),
+      ),
+    );
   }
 
-  Widget _buildError(BuildContext context, String? error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  // --- UTILS ---
+  Widget _buildRotatingPokeball(BuildContext context, {required double size, required double opacity}) {
+    return Positioned(
+      right: -size / 4,
+      top: -size / 4,
+      child: TweenAnimationBuilder(
+        tween: Tween<double>(begin: 0, end: 2 * 3.14159),
+        duration: const Duration(seconds: 20),
+        builder: (context, double value, child) {
+          return Transform.rotate(
+            angle: value,
+            child: Icon(Icons.catching_pokemon, size: size, color: Colors.white.withOpacity(opacity)),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStatBar(BuildContext context, String label, int value, Color color) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
-          const SizedBox(height: 16),
-          Text(error ?? 'Error'),
-          TextButton(onPressed: () => controller.fetchDetail(), child: Text('retry'.tr)),
+          SizedBox(width: 100, child: Text(label.toUpperCase(), style: TextStyle(color: onSurface.withOpacity(0.5), fontSize: 12))),
+          SizedBox(width: 40, child: Text('$value', style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+            child: LinearProgressIndicator(
+              value: value / 150,
+              backgroundColor: color.withOpacity(0.1),
+              color: color,
+              minHeight: 10,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _buildTypeBadges(PokemonDetailModel pokemon) {
+    return Wrap(
+      spacing: 10,
+      children: pokemon.types.map((t) => Chip(
+        label: Text(t.name.toUpperCase(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.getTypeColor(t.name),
+        side: BorderSide.none,
+      )).toList(),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.grey),
+          const SizedBox(width: 15),
+          Text(label, style: const TextStyle(color: Colors.grey)),
+          const Spacer(),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() => Divider(color: Colors.grey.withOpacity(0.1), height: 1);
+}
+
+// Delegate for the sticky TabBar in mobile
+class _SliverTabDelegate extends SliverPersistentHeaderDelegate {
+  _SliverTabDelegate(this._tabBar, this._backgroundColor);
+
+  final TabBar _tabBar;
+  final Color _backgroundColor;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: _backgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverTabDelegate oldDelegate) {
+    return false;
   }
 }
