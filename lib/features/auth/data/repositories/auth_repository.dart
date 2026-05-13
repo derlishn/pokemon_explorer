@@ -11,14 +11,14 @@ class AuthRepository {
   AuthRepository({required this.secureStorage});
 
   /// Saves user credentials securely
-  Future<Either<Failure, void>> saveCredentials(
+  Future<Either<Failure, Unit>> saveCredentials(
     String username,
     String password,
   ) async {
     try {
       await secureStorage.write(AppConstants.keyUserName, username);
       await secureStorage.write(AppConstants.keyUserPassword, password);
-      return const Right(null);
+      return const Right(unit);
     } catch (e) {
       return const Left(CacheFailure(ErrorConstants.errorUnknown));
     }
@@ -45,10 +45,10 @@ class AuthRepository {
   }
 
   /// Clears all session data
-  Future<Either<Failure, void>> clearSession() async {
+  Future<Either<Failure, Unit>> clearSession() async {
     try {
       await secureStorage.deleteAll();
-      return const Right(null);
+      return const Right(unit);
     } catch (e) {
       return const Left(CacheFailure(ErrorConstants.errorUnknown));
     }

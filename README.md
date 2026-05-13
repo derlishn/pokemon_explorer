@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="pokemon_explorer_banner.png" width="100%" alt="Pokémon Explorer Banner" />
-</p>
-
 <h1 align="center">🚀 Pokémon Explorer</h1>
 
 <p align="center">
@@ -18,11 +14,11 @@
 
 ---
 
-## 📝 Descripción
+## Descripción
 
 Pokémon Explorer es una aplicación móvil y de escritorio desarrollada con Flutter que permite a los usuarios explorar el catálogo de Pokémon consumiendo la [PokeAPI](https://pokeapi.co/). El proyecto ha sido diseñado bajo principios de **Clean Architecture** para garantizar la escalabilidad, la facilidad de testeo y el desacoplamiento de componentes.
 
-## 🛠️ Tecnologías y Herramientas
+## Tecnologías y Herramientas
 
 - **Lenguaje**: Dart 3.10.8
 - **Framework**: Flutter 3.38.9
@@ -31,7 +27,7 @@ Pokémon Explorer es una aplicación móvil y de escritorio desarrollada con Flu
 - **Navegación**: GetX Routing con Middleware
 - **Pruebas**: Mocktail (Unit Testing)
 
-## 🏗️ Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 El código se organiza de manera modular siguiendo una estructura orientada a características (*Feature-driven*):
 
@@ -40,7 +36,7 @@ El código se organiza de manera modular siguiendo una estructura orientada a ca
 - **Services**: Servicios globales que gestionan el estado persistente de la aplicación (Autenticación, Favoritos, Preferencias).
 - **Routes**: Definición centralizada de la navegación y protección de rutas.
 
-## 🌟 Características Implementadas
+## Características Implementadas
 
 - **Consumo de API REST**: Integración completa con PokeAPI para obtener listas y detalles.
 - **Caché Offline**: Implementación de una capa de repositorio que prioriza el almacenamiento local para mejorar la experiencia del usuario.
@@ -48,7 +44,7 @@ El código se organiza de manera modular siguiendo una estructura orientada a ca
 - **Búsqueda Avanzada**: Sistema de búsqueda con *debounce* para optimizar las peticiones de red.
 - **Gestión de Favoritos**: Persistencia local de Pokémon marcados por el usuario.
 
-## 📸 Capturas de Pantalla
+## Capturas de Pantalla
 
 | Vista Móvil | Vista Escritorio |
 | :---: | :---: |
@@ -56,7 +52,7 @@ El código se organiza de manera modular siguiendo una estructura orientada a ca
 
 ---
 
-## 🚀 Instalación y Ejecución
+## Instalación y Ejecución
 
 Para clonar y ejecutar esta aplicación localmente, sigue estos pasos:
 
@@ -81,7 +77,7 @@ Para clonar y ejecutar esta aplicación localmente, sigue estos pasos:
      flutter run -d macos   # macOS
      ```
 
-## 🧪 Ejecución de Tests
+## Ejecución de Tests
 
 Para validar la integridad del código, puedes ejecutar la suite de pruebas unitarias:
 
