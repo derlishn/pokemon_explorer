@@ -9,7 +9,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Arquitectura-Clean%20Modular-green?style=flat-square" alt="Architecture" />
   <img src="https://img.shields.io/badge/Tests-100%25%20Pasando-brightgreen?style=flat-square&logo=dart" alt="Tests" />
-  <img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blueviolet?style=flat-square&logo=github-actions" alt="CI/CD" />
   <img src="https://img.shields.io/badge/Licencia-MIT-yellow.svg?style=flat-square" alt="License" />
 </p>
 
@@ -27,7 +26,6 @@ Pokémon Explorer es una aplicación móvil y de escritorio desarrollada con Flu
 - **Persistencia**: GetStorage (Caché local)
 - **Navegación**: GetX Routing con Middleware
 - **Pruebas**: Mocktail (Unit Testing)
-- **CI/CD**: GitHub Actions (Automated Testing & Analysis)
 
 ## Arquitectura del Proyecto
 
