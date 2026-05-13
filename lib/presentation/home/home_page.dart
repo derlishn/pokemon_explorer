@@ -125,7 +125,7 @@ class HomePage extends GetView<HomeController> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(

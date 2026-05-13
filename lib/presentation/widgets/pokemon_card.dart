@@ -65,7 +65,7 @@ class PokemonCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withOpacity(0.2),
+                color: colorScheme.surfaceVariant.withOpacity(0.5),
               ),
               child: Text(
                 pokemon.name.capitalizeFirst!,

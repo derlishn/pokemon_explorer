@@ -20,9 +20,10 @@ class AppTheme {
             : AppColors.surfaceDark,
       ),
       textTheme: GoogleFonts.outfitTextTheme(),
-      // Fix: Use CardTheme for the cardTheme property
-      cardTheme: CardTheme(
+      // Ensure compatibility with CardTheme
+      cardTheme: CardThemeData(
         elevation: 0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );

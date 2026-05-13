@@ -74,6 +74,16 @@ class SettingsPage extends GetView<SettingsController> {
   }
 
   Widget _buildAccentColorPicker(BuildContext context) {
+    // List of available colors including Neutral (BlueGrey)
+    final colors = [
+      Colors.grey, // Neutral
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -82,7 +92,7 @@ class SettingsPage extends GetView<SettingsController> {
           const Spacer(),
           Wrap(
             spacing: 8,
-            children: [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple].map((color) {
+            children: colors.map((color) {
               return Obx(() => GestureDetector(
                 onTap: () => SettingsService.to.updateAccentColor(color),
                 child: Container(
@@ -92,7 +102,7 @@ class SettingsPage extends GetView<SettingsController> {
                     color: color,
                     shape: BoxShape.circle,
                     border: SettingsService.to.accentColor.value == color.value
-                        ? Border.all(color: Colors.white, width: 2)
+                        ? Border.all(color: Theme.of(context).colorScheme.onBackground, width: 2)
                         : null,
                   ),
                 ),

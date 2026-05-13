@@ -11,13 +11,20 @@ class SettingsService extends GetxService {
   // Reactive states
   final RxBool _isDarkMode = false.obs;
   final Rx<Locale> _locale = const Locale('en', 'US').obs;
-  final RxInt _gridColumns = 0.obs; // 0 = Auto
-  final RxInt _accentColorValue = Colors.red.value.obs;
+  final RxInt _gridColumns = 0.obs;
+  
+  // Neutral Color
+  static final int neutralColorValue = Colors.grey.value;
+  final RxInt _accentColorValue = neutralColorValue.obs;
+
+  // Profile Avatar (Default Pikachu)
+  final RxString _profileAvatar = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'.obs;
 
   bool get isDarkMode => _isDarkMode.value;
   Locale get locale => _locale.value;
   int get gridColumns => _gridColumns.value;
   Color get accentColor => Color(_accentColorValue.value);
+  String get profileAvatar => _profileAvatar.value;
 
   ThemeMode get themeMode {
     final bool? isDark = _box.read(AppConstants.keyIsDarkMode);
@@ -28,7 +35,8 @@ class SettingsService extends GetxService {
   Future<SettingsService> init() async {
     _isDarkMode.value = _box.read(AppConstants.keyIsDarkMode) ?? false;
     _gridColumns.value = _box.read('grid_columns') ?? 0;
-    _accentColorValue.value = _box.read('accent_color') ?? Colors.red.value;
+    _accentColorValue.value = _box.read('accent_color') ?? neutralColorValue;
+    _profileAvatar.value = _box.read('profile_avatar') ?? 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png';
     
     final String? langCode = _box.read(AppConstants.keyLanguage);
     if (langCode != null) {
@@ -60,7 +68,11 @@ class SettingsService extends GetxService {
   void updateAccentColor(Color color) {
     _accentColorValue.value = color.value;
     _box.write('accent_color', color.value);
-    // Force a theme refresh if needed
     Get.forceAppUpdate();
+  }
+
+  void updateAvatar(String url) {
+    _profileAvatar.value = url;
+    _box.write('profile_avatar', url);
   }
 }
