@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/presentation/widgets/rotating_pokeball.dart';
-import 'login_controller.dart';
+import 'package:pokemon_explorer/presentation/login/login_controller.dart';
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
@@ -11,7 +11,7 @@ class LoginPage extends GetView<LoginController> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           // Background Aesthetic (Top Right)
@@ -57,7 +57,7 @@ class LoginPage extends GetView<LoginController> {
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -67,7 +67,7 @@ class LoginPage extends GetView<LoginController> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        color: colorScheme.onBackground.withOpacity(0.5),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(height: 60),
@@ -97,12 +97,12 @@ class LoginPage extends GetView<LoginController> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
-                        disabledBackgroundColor: colorScheme.primary.withOpacity(0.12),
-                        disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+                        disabledBackgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: controller.isFormValid.value ? 4 : 0,
-                        shadowColor: colorScheme.primary.withOpacity(0.4),
+                        shadowColor: colorScheme.primary.withValues(alpha: 0.4),
                       ),
                       child: Text(
                         'login'.tr.toUpperCase(),
@@ -132,9 +132,9 @@ class LoginPage extends GetView<LoginController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.4),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outline.withOpacity(0.1)),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: TextField(
         controller: controller,
@@ -142,7 +142,7 @@ class LoginPage extends GetView<LoginController> {
         style: TextStyle(color: colorScheme.onSurfaceVariant),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
           prefixIcon: Icon(icon, color: colorScheme.primary, size: 22),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),

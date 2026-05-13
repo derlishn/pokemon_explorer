@@ -6,7 +6,7 @@ import 'package:pokemon_explorer/presentation/settings/widgets/user_profile_card
 import 'package:pokemon_explorer/presentation/settings/widgets/about_app_card.dart';
 import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
 import 'package:pokemon_explorer/presentation/widgets/app_snackbar.dart';
-import 'settings_controller.dart';
+import 'package:pokemon_explorer/presentation/settings/settings_controller.dart';
 
 class SettingsPage extends GetView<SettingsController> {
   const SettingsPage({super.key});
@@ -82,7 +82,7 @@ class SettingsPage extends GetView<SettingsController> {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(24),
@@ -273,7 +273,7 @@ class SettingsPage extends GetView<SettingsController> {
   Widget _buildGridSelector() {
     return Obx(() {
       final allowedValues = [0, 1, 2];
-      int currentValue = SettingsService.to.gridColumns;
+      final int currentValue = SettingsService.to.gridColumns;
       
       // Safety check: if value is not in [0, 1, 2], return a simple text or fix it
       if (!allowedValues.contains(currentValue)) {

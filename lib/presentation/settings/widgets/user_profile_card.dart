@@ -58,7 +58,7 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: SettingsService.to.accentColor.withOpacity(0.4),
+                      color: SettingsService.to.accentColor.withValues(alpha: 0.4),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),
@@ -74,8 +74,8 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
               child: CachedNetworkImage(
                 imageUrl: _getAnimatedUrl(SettingsService.to.profileAvatar),
                 fit: BoxFit.contain,
-                placeholder: (_, __) => const Center(child: SizedBox(width: 15, height: 15, child: CircularProgressIndicator(strokeWidth: 1))),
-                errorWidget: (_, __, ___) => const Icon(Icons.person),
+                placeholder: (context, url) => const Center(child: SizedBox(width: 15, height: 15, child: CircularProgressIndicator(strokeWidth: 1))),
+                errorWidget: (context, url, error) => const Icon(Icons.person),
               ),
             )),
             
@@ -146,7 +146,7 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: avatars.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 15),
+                separatorBuilder: (context, index) => const SizedBox(width: 15),
                 itemBuilder: (context, index) {
                   final id = avatars[index]['id']!;
                   final staticUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
@@ -167,7 +167,7 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
                             decoration: BoxDecoration(
                               color: isSelected 
                                   ? Theme.of(context).colorScheme.primaryContainer 
-                                  : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+                                  : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(20),
                               border: isSelected 
                                   ? Border.all(color: SettingsService.to.accentColor, width: 2)

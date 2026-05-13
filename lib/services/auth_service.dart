@@ -21,7 +21,7 @@ class AuthService extends GetxService {
     userName.value = user;
     _box.write(AppConstants.keyIsLoggedIn, true);
     _box.write(AppConstants.keyUserName, user);
-    Get.offAllNamed(AppRoutes.HOME);
+    Get.offAllNamed(AppRoutes.home);
   }
 
   void logout() {
@@ -29,6 +29,6 @@ class AuthService extends GetxService {
     userName.value = 'Invitado';
     _box.remove(AppConstants.keyIsLoggedIn);
     _box.remove(AppConstants.keyUserName);
-    Get.offAllNamed(AppRoutes.LOGIN);
+    Get.offAllNamed(AppRoutes.login);
   }
 }

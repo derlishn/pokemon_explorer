@@ -9,7 +9,7 @@ import 'package:pokemon_explorer/presentation/widgets/rotating_pokeball.dart';
 import 'package:pokemon_explorer/presentation/detail/widgets/about_tab.dart';
 import 'package:pokemon_explorer/presentation/detail/widgets/stats_tab.dart';
 import 'package:pokemon_explorer/presentation/detail/widgets/abilities_tab.dart';
-import 'detail_controller.dart';
+import 'package:pokemon_explorer/presentation/detail/detail_controller.dart';
 
 class DetailPage extends GetView<DetailController> {
   const DetailPage({super.key});
@@ -60,7 +60,7 @@ class DetailPage extends GetView<DetailController> {
         Expanded(
           flex: 6,
           child: Container(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: _buildInfoContent(context, pokemon, isDesktop: true),
           ),
         ),

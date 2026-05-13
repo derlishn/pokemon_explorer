@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'favorites_controller.dart';
+import 'package:pokemon_explorer/presentation/favorites/favorites_controller.dart';
 
 class FavoritesBinding extends Bindings {
   @override

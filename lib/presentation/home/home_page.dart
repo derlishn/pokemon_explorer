@@ -8,7 +8,7 @@ import 'package:pokemon_explorer/presentation/widgets/empty_state.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/presentation/widgets/pokemon_card.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
-import 'home_controller.dart';
+import 'package:pokemon_explorer/presentation/home/home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -52,11 +52,11 @@ class HomePage extends GetView<HomeController> {
       actions: [
         IconButton(
           icon: const Icon(Icons.favorite_border),
-          onPressed: () => Get.toNamed(AppRoutes.FAVORITES),
+          onPressed: () => Get.toNamed(AppRoutes.favorites),
         ),
         IconButton(
           icon: const Icon(Icons.settings_outlined),
-          onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
+          onPressed: () => Get.toNamed(AppRoutes.settings),
         ),
         const SizedBox(width: 8),
       ],
@@ -77,11 +77,11 @@ class HomePage extends GetView<HomeController> {
   Widget _buildSearchBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        onChanged: (val) => controller.updateSearch(val),
+        onChanged: (val) => controller.search = val,
         decoration: InputDecoration(
           hintText: 'search_hint'.tr,
           prefixIcon: const Icon(Icons.search, size: 20),
@@ -140,7 +140,7 @@ class HomePage extends GetView<HomeController> {
         child: FadeInAnimation(
           child: PokemonCard(
             pokemon: item,
-            onTap: () => Get.toNamed(AppRoutes.DETAIL, arguments: item),
+            onTap: () => Get.toNamed(AppRoutes.detail, arguments: item),
           ),
         ),
       ),

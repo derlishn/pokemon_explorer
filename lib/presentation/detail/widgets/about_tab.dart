@@ -36,5 +36,5 @@ class AboutTab extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() => Divider(color: Colors.grey.withOpacity(0.1), height: 1);
+  Widget _buildDivider() => Divider(color: Colors.grey.withValues(alpha: 0.1), height: 1);
 }

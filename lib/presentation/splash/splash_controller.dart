@@ -13,9 +13,9 @@ class SplashController extends GetxController {
     await Future.delayed(const Duration(seconds: 2));
     
     if (AuthService.to.isLoggedIn.value) {
-      Get.offAllNamed(AppRoutes.HOME);
+      await Get.offAllNamed(AppRoutes.home);
     } else {
-      Get.offAllNamed(AppRoutes.LOGIN);
+      await Get.offAllNamed(AppRoutes.login);
     }
   }
 }

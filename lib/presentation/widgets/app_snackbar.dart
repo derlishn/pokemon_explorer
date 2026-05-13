@@ -45,7 +45,7 @@ class AppSnackbar {
       title,
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: backgroundColor.withOpacity(0.9),
+      backgroundColor: backgroundColor.withValues(alpha: 0.9),
       colorText: Colors.white,
       icon: icon,
       margin: EdgeInsets.symmetric(
@@ -59,7 +59,7 @@ class AppSnackbar {
       dismissDirection: DismissDirection.horizontal,
       boxShadows: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
           blurRadius: 10,
           offset: const Offset(0, 5),
         ),

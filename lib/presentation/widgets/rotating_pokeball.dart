@@ -23,7 +23,7 @@ class RotatingPokeball extends StatelessWidget {
           child: Icon(
             Icons.catching_pokemon, 
             size: size, 
-            color: (color ?? Colors.white).withOpacity(opacity),
+            color: (color ?? Colors.white).withValues(alpha: opacity),
           ),
         );
       },

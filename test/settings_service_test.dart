@@ -29,15 +29,15 @@ void main() {
     });
 
     test('Initial accent color should be default neutral', () {
-      expect(settingsService.accentColor.value, Colors.grey.value);
+      expect(settingsService.accentColor.toARGB32(), Colors.grey.toARGB32());
     });
 
     test('updateAccentColor should change the color and persist it', () async {
       // In a real app, we'd use Get.put, but here we test the logic
-      final newColor = Colors.red;
+      const newColor = Colors.red;
       settingsService.updateAccentColor(newColor);
       
-      expect(settingsService.accentColor.value, newColor.value);
+      expect(settingsService.accentColor.toARGB32(), newColor.toARGB32());
     });
   });
 }

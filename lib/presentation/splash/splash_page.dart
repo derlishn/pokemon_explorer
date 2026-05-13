@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/helpers/app_colors.dart';
-import 'splash_controller.dart';
+import 'package:pokemon_explorer/presentation/splash/splash_controller.dart';
 
 class SplashPage extends GetView<SplashController> {
   const SplashPage({super.key});

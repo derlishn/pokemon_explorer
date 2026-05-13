@@ -55,7 +55,7 @@ class PokemonRepository {
           url: 'https://pokeapi.co/api/v2/pokemon/$id/',
           types: detail.types.map((t) => t.name).toList(),
         );
-        _cache.write(_cachePrefix + name, item.toJson());
+        await _cache.write(_cachePrefix + name, item.toJson());
       }
 
       return detail;

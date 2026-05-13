@@ -80,7 +80,7 @@ class SettingsService extends GetxService {
 
   void updateAccentColor(Color color) {
     _accentColor.value = color;
-    _storage.write('accent_color', color.value);
+    _storage.write('accent_color', color.toARGB32());
     Get.forceAppUpdate();
   }
 

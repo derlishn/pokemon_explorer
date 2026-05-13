@@ -16,7 +16,7 @@ class HomeController extends GetxController {
   Timer? _debounce;
   bool _isDisposed = false;
   String _lastQuery = '';
-  List<PokemonListItemModel> _currentSearchResults = [];
+  final List<PokemonListItemModel> _currentSearchResults = [];
 
   HomeController({required this.repository});
 
@@ -127,7 +127,7 @@ class HomeController extends GetxController {
     });
   }
 
-  void updateSearch(String query) {
+  set search(String query) {
     searchQuery.value = query;
   }
 

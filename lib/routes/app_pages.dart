@@ -11,44 +11,44 @@ import 'package:pokemon_explorer/presentation/favorites/favorites_page.dart';
 import 'package:pokemon_explorer/presentation/favorites/favorites_binding.dart';
 import 'package:pokemon_explorer/presentation/settings/settings_page.dart';
 import 'package:pokemon_explorer/presentation/settings/settings_binding.dart';
-import 'auth_middleware.dart';
+import 'package:pokemon_explorer/routes/auth_middleware.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = AppRoutes.SPLASH;
+  static const initial = AppRoutes.splash;
 
   static final routes = [
     GetPage(
-      name: AppRoutes.SPLASH,
+      name: AppRoutes.splash,
       page: () => const SplashPage(),
       binding: SplashBinding(),
     ),
     GetPage(
-      name: AppRoutes.LOGIN,
+      name: AppRoutes.login,
       page: () => const LoginPage(),
       binding: LoginBinding(),
     ),
     GetPage(
-      name: AppRoutes.HOME,
+      name: AppRoutes.home,
       page: () => const HomePage(),
       binding: HomeBinding(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
-      name: AppRoutes.DETAIL,
+      name: AppRoutes.detail,
       page: () => const DetailPage(),
       binding: DetailBinding(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
-      name: AppRoutes.FAVORITES,
+      name: AppRoutes.favorites,
       page: () => const FavoritesPage(),
       binding: FavoritesBinding(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
-      name: AppRoutes.SETTINGS,
+      name: AppRoutes.settings,
       page: () => const SettingsPage(),
       binding: SettingsBinding(),
       middlewares: [AuthMiddleware()],

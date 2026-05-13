@@ -27,7 +27,7 @@ class StatBar extends StatelessWidget {
             child: Text(
               label.toUpperCase(), 
               style: TextStyle(
-                color: onSurface.withOpacity(0.5), 
+                color: onSurface.withValues(alpha: 0.5), 
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -47,7 +47,7 @@ class StatBar extends StatelessWidget {
               curve: Curves.easeOutCubic,
               builder: (context, val, _) => LinearProgressIndicator(
                 value: val,
-                backgroundColor: color.withOpacity(0.1),
+                backgroundColor: color.withValues(alpha: 0.1),
                 color: color,
                 minHeight: 10,
                 borderRadius: BorderRadius.circular(5),

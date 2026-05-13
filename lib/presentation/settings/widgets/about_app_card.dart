@@ -10,7 +10,7 @@ class AboutAppCard extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Card(
         elevation: 0,
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),

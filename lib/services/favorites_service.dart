@@ -13,7 +13,7 @@ class FavoritesService extends GetxService {
 
   Future<FavoritesService> init() async {
     // Load saved favorites from storage
-    List<dynamic>? savedData = _storage.read<List<dynamic>>(_key);
+    final List<dynamic>? savedData = _storage.read<List<dynamic>>(_key);
     if (savedData != null) {
       favorites.assignAll(
         savedData.map((e) => PokemonListItemModel.fromJson(e)).toList()

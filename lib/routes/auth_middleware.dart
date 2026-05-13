@@ -9,6 +9,6 @@ class AuthMiddleware extends GetMiddleware {
     final authService = AuthService.to;
     return authService.isLoggedIn.value
         ? null
-        : const RouteSettings(name: AppRoutes.LOGIN);
+        : const RouteSettings(name: AppRoutes.login);
   }
 }
