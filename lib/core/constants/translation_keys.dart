@@ -31,6 +31,9 @@ class TranslationKeys {
   static const String auto = 'auto';
   static const String cacheClearedTitle = 'cache_cleared_title';
   static const String cacheClearedMsg = 'cache_cleared_msg';
+  static const String meters = 'meters';
+  static const String kilograms = 'kilograms';
+  static const String xp = 'xp';
   static const String height = 'height';
   static const String weight = 'weight';
   static const String baseStats = 'base_stats';
