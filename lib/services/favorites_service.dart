@@ -43,4 +43,9 @@ class FavoritesService extends GetxService {
   bool isFavorite(int pokemonId) {
     return favorites.any((p) => p.id == pokemonId);
   }
+
+  void clearAll() {
+    favorites.clear();
+    storageService.remove(AppConstants.keyFavorites);
+  }
 }

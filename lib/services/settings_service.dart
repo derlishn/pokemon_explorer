@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/core/storage/storage_service.dart';
 import 'package:pokemon_explorer/core/constants/constants.dart';
+import 'package:pokemon_explorer/services/favorites_service.dart';
 
 class SettingsService extends GetxService {
   static SettingsService get to => Get.find();
@@ -134,5 +135,6 @@ class SettingsService extends GetxService {
       }
     }
     _refreshSignal.value++; // Notify Home to reload
+    FavoritesService.to.clearAll(); // Also clear favorites
   }
 }
