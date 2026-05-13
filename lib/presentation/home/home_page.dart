@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/presentation/widgets/empty_state.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
@@ -133,6 +134,15 @@ class HomePage extends GetView<HomeController> {
         decoration: InputDecoration(
           hintText: 'Buscar Pokémon...',
           prefixIcon: const Icon(Icons.search, size: 20),
+          suffixIcon: Obx(() => controller.isSearching.value
+              ? Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 24,
+                  ),
+                )
+              : const SizedBox.shrink()),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
