@@ -18,22 +18,25 @@ class HomePage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Adaptive Grid Columns
-            final int manualColumns = SettingsService.to.gridColumns;
-            final double width = constraints.maxWidth;
-            final int crossAxisCount = manualColumns > 0
-                ? manualColumns
-                : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Adaptive Grid Columns
+              final int manualColumns = SettingsService.to.gridColumns;
+              final double width = constraints.maxWidth;
+              final int crossAxisCount = manualColumns > 0
+                  ? manualColumns
+                  : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
 
-            return CustomScrollView(
-              slivers: [
-                _buildAppBar(context),
-                _buildGrid(crossAxisCount),
-              ],
-            );
-          },
+              return CustomScrollView(
+                slivers: [
+                  _buildAppBar(context),
+                  _buildGrid(crossAxisCount),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

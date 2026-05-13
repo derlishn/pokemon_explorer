@@ -13,8 +13,10 @@ class LoginPage extends GetView<LoginController> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      body: Stack(
-        children: [
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
           // Background Aesthetic (Top Right)
           Positioned(
             top: -100,
@@ -121,7 +123,7 @@ class LoginPage extends GetView<LoginController> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildTextField({
