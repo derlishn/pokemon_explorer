@@ -36,13 +36,26 @@ El código se organiza de manera modular siguiendo una estructura orientada a ca
 - **Services**: Servicios globales que gestionan el estado persistente de la aplicación (Autenticación, Favoritos, Preferencias).
 - **Routes**: Definición centralizada de la navegación y protección de rutas.
 
-## Características Implementadas
+## Características Técnicas
 
-- **Consumo de API REST**: Integración completa con PokeAPI para obtener listas y detalles.
-- **Caché Offline**: Implementación de una capa de repositorio que prioriza el almacenamiento local para mejorar la experiencia del usuario.
-- **Diseño Responsivo**: Interfaz adaptada automáticamente para dispositivos móviles y resoluciones de escritorio.
-- **Búsqueda Avanzada**: Sistema de búsqueda con *debounce* para optimizar las peticiones de red.
-- **Gestión de Favoritos**: Persistencia local de Pokémon marcados por el usuario.
+### Gestión de Datos
+- **Caché Offline con Reconstrucción**: El repositorio prioriza datos locales y reconstruye la lista principal escaneando los objetos individuales en caché si la red o el índice fallan.
+- **Persistencia de Objetos**: Separación de caché de listas y caché de detalles para garantizar la disponibilidad inmediata de los datos ya consultados.
+- **Sincronización Centralizada**: Gestión de favoritos y configuraciones (columnas, tema, idioma) persistida localmente y sincronizada con el borrado de caché.
+
+### Rendimiento y UX
+- **Optimización de Carga**: Procesamiento por lotes en la obtención de detalles en segundo plano para evitar bloqueos en la interfaz y asegurar 60 FPS estables.
+- **Detección de Red**: Monitoreo de conexión con banner no intrusivo, auto-reintento y estados de error con animaciones integradas.
+- **Búsqueda Optimizada**: Sistema de búsqueda con debounce de 800ms y botón de limpieza instantánea vinculado al controlador.
+
+### Estructura y Adaptabilidad
+- **Layout Adaptativo**: Sistema que recalcula la cuadrícula y los componentes según el tamaño de pantalla (Móvil/Desktop) y la configuración del usuario.
+- **Arquitectura Modular**: Estructura desacoplada por características, sin valores fijos en el código y lista para escalar.
+- **Navegación Segura**: Rutas protegidas mediante middlewares y transferencia de argumentos con tipado estricto.
+
+### Acceso y Navegación (Prueba Técnica)
+- **Credenciales de Acceso**: Implementación del login obligatorio con validación local (Usuario: `flutter` / Contraseña: `flutter`).
+- **Flujo de Navegación**: Splash Screen inicial, seguido de la pantalla de Login y acceso al Home solo tras autenticación exitosa.
 
 ## Capturas de Pantalla
 
