@@ -4,6 +4,7 @@ import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/features/pokemon/data/repositories/pokemon_repository.dart';
 import 'package:pokemon_explorer/services/connectivity_service.dart';
+import 'package:pokemon_explorer/services/settings_service.dart';
 import 'dart:async';
 
 class HomeController extends GetxController {
@@ -30,6 +31,11 @@ class HomeController extends GetxController {
     });
 
     ever(searchQuery, (_) => _onSearchChanged());
+
+    // Refresh when cache is cleared in settings
+    ever(SettingsService.to.refreshSignalRx, (_) {
+      pagingController.refresh();
+    });
 
     // Auto-retry when connection returns
     ever(ConnectivityService.to.isConnectedRx, (bool connected) {
@@ -92,6 +98,7 @@ class HomeController extends GetxController {
   }
 
   void _fetchTypesInBackground(List<PokemonListItemModel> items) async {
+    int updateCount = 0;
     for (var item in items) {
       if (_isDisposed) return;
       if (item.types.isNotEmpty) continue;
@@ -102,19 +109,23 @@ class HomeController extends GetxController {
       );
 
       result.fold(
-        (failure) => null, // Silent fail for background tasks
+        (failure) => null,
         (detail) {
           if (_isDisposed) return;
           final typeNames = detail.types.map((e) => e.name).toList();
           final itemList = pagingController.itemList;
           if (itemList != null) {
-            final index = itemList.indexWhere(
-              (element) => element.name == item.name,
-            );
+            final index = itemList.indexWhere((element) => element.name == item.name);
             if (index != -1) {
               itemList[index] = item.copyWith(types: typeNames);
-              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-              pagingController.notifyListeners();
+              updateCount++;
+              
+              // Only rebuild UI every 4 items or at the end of the batch
+              // This drastically improves performance (from 20 rebuilds to 5)
+              if (updateCount % 4 == 0 || updateCount == items.length) {
+                // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+                pagingController.notifyListeners();
+              }
             }
           }
         },

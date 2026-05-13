@@ -18,6 +18,7 @@ class SettingsService extends GetxService {
   final RxInt _gridColumns = 0.obs; 
   final RxBool _useCache = true.obs;
   final RxString _profileAvatar = AppConstants.defaultAvatar.obs;
+  final RxInt _refreshSignal = 0.obs; // Signal to refresh Home on cache clear
   final Rx<Locale> _locale = const Locale(
     AppConstants.defaultLanguageCode,
     AppConstants.defaultCountryCode,
@@ -28,6 +29,7 @@ class SettingsService extends GetxService {
   int get gridColumns => _gridColumns.value;
   bool get useCache => _useCache.value;
   String get profileAvatar => _profileAvatar.value;
+  RxInt get refreshSignalRx => _refreshSignal;
   Locale get locale => _locale.value;
 
   bool get isDarkMode => _themeMode.value == ThemeMode.dark;
@@ -124,9 +126,13 @@ class SettingsService extends GetxService {
   void clearCache() {
     final allKeys = storageService.getKeys().toList();
     for (var key in allKeys) {
-      if (key.toString().startsWith(AppConstants.pokemonCachePrefix)) {
-        storageService.remove(key.toString());
+      final k = key.toString();
+      if (k.startsWith(AppConstants.pokemonCachePrefix) || 
+          k.startsWith(AppConstants.keyPokemonListPrefix) ||
+          k.startsWith(AppConstants.pokemonDetailCachePrefix)) {
+        storageService.remove(k);
       }
     }
+    _refreshSignal.value++; // Notify Home to reload
   }
 }
