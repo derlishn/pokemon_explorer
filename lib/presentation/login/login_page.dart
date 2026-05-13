@@ -90,14 +90,18 @@ class LoginPage extends GetView<LoginController> {
                     const SizedBox(height: 48),
 
                     // Login Button
-                    ElevatedButton(
-                      onPressed: () => controller.login(),
+                    Obx(() => ElevatedButton(
+                      onPressed: controller.isFormValid.value 
+                          ? () => controller.login() 
+                          : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
+                        disabledBackgroundColor: colorScheme.primary.withOpacity(0.12),
+                        disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        elevation: 4,
+                        elevation: controller.isFormValid.value ? 4 : 0,
                         shadowColor: colorScheme.primary.withOpacity(0.4),
                       ),
                       child: Text(
@@ -108,7 +112,7 @@ class LoginPage extends GetView<LoginController> {
                           letterSpacing: 2.0,
                         ),
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),

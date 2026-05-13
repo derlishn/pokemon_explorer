@@ -51,6 +51,10 @@ class HomePage extends GetView<HomeController> {
       ),
       actions: [
         IconButton(
+          icon: const Icon(Icons.favorite_border),
+          onPressed: () => Get.toNamed(AppRoutes.FAVORITES),
+        ),
+        IconButton(
           icon: const Icon(Icons.settings_outlined),
           onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
         ),

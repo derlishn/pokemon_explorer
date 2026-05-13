@@ -6,13 +6,30 @@ import 'package:pokemon_explorer/presentation/widgets/app_snackbar.dart';
 class LoginController extends GetxController {
   final userController = TextEditingController();
   final passwordController = TextEditingController();
+  
+  final isFormValid = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Listen to changes to validate the form in real-time
+    userController.addListener(_validateForm);
+    passwordController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    final user = userController.text.trim();
+    final pass = passwordController.text.trim();
+    
+    // Condition: Both fields must have at least 4 characters
+    isFormValid.value = user.length >= 4 && pass.length >= 4;
+  }
 
   void login() {
     final user = userController.text.trim();
     final pass = passwordController.text.trim();
 
-    if (user.isNotEmpty && pass.isNotEmpty) {
-      // For this demo, any non-empty credentials work
+    if (user == 'flutter' && pass == 'flutter') {
       AuthService.to.login(user);
     } else {
       AppSnackbar.error(
