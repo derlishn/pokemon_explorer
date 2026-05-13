@@ -14,7 +14,7 @@ class LoginPage extends GetView<LoginController> {
       backgroundColor: colorScheme.background,
       body: Stack(
         children: [
-          // Background Aesthetic
+          // Background Aesthetic (Top Right)
           Positioned(
             top: -100,
             right: -100,
@@ -25,66 +25,100 @@ class LoginPage extends GetView<LoginController> {
             ),
           ),
           
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo/Title Area
-                  Icon(Icons.catching_pokemon, size: 80, color: colorScheme.primary),
-                  const SizedBox(height: 20),
-                  Text(
-                    'app_name'.tr,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onBackground,
+          // Background Aesthetic (Bottom Left) - Adding symmetry for desktop
+          Positioned(
+            bottom: -150,
+            left: -150,
+            child: RotatingPokeball(
+              size: 500,
+              opacity: 0.03,
+              color: colorScheme.primary,
+            ),
+          ),
+          
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 450),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Logo Area
+                    Hero(
+                      tag: 'login_logo',
+                      child: Icon(Icons.catching_pokemon, size: 100, color: colorScheme.primary),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Inicia sesión para continuar tu aventura',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6)),
-                  ),
-                  const SizedBox(height: 60),
+                    const SizedBox(height: 24),
+                    Text(
+                      'app_name'.tr,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onBackground,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Inicia sesión para continuar tu aventura',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.onBackground.withOpacity(0.5),
+                      ),
+                    ),
+                    const SizedBox(height: 60),
 
-                  // Input Fields
-                  _buildTextField(
-                    controller: controller.userController,
-                    hint: 'user'.tr,
-                    icon: Icons.person_outline,
-                    colorScheme: colorScheme,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    controller: controller.passwordController,
-                    hint: 'password'.tr,
-                    icon: Icons.lock_outline,
-                    isPassword: true,
-                    colorScheme: colorScheme,
-                  ),
-                  const SizedBox(height: 40),
+                    // Input Form
+                    _buildTextField(
+                      controller: controller.userController,
+                      hint: 'user'.tr,
+                      icon: Icons.person_outline,
+                      colorScheme: colorScheme,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      controller: controller.passwordController,
+                      hint: 'password'.tr,
+                      icon: Icons.lock_outline,
+                      isPassword: true,
+                      colorScheme: colorScheme,
+                    ),
+                    const SizedBox(height: 48),
 
-                  // Login Button
-                  ElevatedButton(
-                    onPressed: () => controller.login(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      elevation: 0,
+                    // Login Button
+                    ElevatedButton(
+                      onPressed: () => controller.login(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 4,
+                        shadowColor: colorScheme.primary.withOpacity(0.4),
+                      ),
+                      child: Text(
+                        'login'.tr.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold, 
+                          letterSpacing: 2.0,
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      'login'.tr.toUpperCase(),
-                      style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () {}, // Optional: Forgot password
+                      child: Text(
+                        '¿Olvidaste tu contraseña?',
+                        style: TextStyle(color: colorScheme.primary.withOpacity(0.7)),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -102,17 +136,20 @@ class LoginPage extends GetView<LoginController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(15),
+        color: colorScheme.surfaceVariant.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outline.withOpacity(0.1)),
       ),
       child: TextField(
         controller: controller,
         obscureText: isPassword,
+        style: TextStyle(color: colorScheme.onSurfaceVariant),
         decoration: InputDecoration(
           hintText: hint,
-          prefixIcon: Icon(icon, color: colorScheme.primary),
+          hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+          prefixIcon: Icon(icon, color: colorScheme.primary, size: 22),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
       ),
     );

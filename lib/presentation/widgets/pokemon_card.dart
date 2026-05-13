@@ -74,13 +74,14 @@ class PokemonCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 4,
+                    runSpacing: 4,
                     children: pokemon.types
                         .take(2)
                         .map(
                           (type) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 2),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
                               vertical: 2,
