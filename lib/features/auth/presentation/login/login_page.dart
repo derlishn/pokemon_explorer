@@ -16,20 +16,17 @@ class LoginPage extends GetView<LoginController> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: const Stack(
-          children: [
-            // Background Aesthetic
-            LoginBackground(),
+      body: const Stack(
+        children: [
+          // Background Aesthetic
+          LoginBackground(),
 
-            Center(
-              child: SingleChildScrollView(
-                child: _LoginContent(),
-              ),
+          Center(
+            child: SingleChildScrollView(
+              child: _LoginContent(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

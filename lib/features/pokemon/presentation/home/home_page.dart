@@ -12,31 +12,28 @@ class HomePage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // Adaptive Columns Calculation
-              final double width = constraints.maxWidth;
-              final int manualColumns = SettingsService.to.gridColumns;
-              final int crossAxisCount = manualColumns > 0
-                  ? manualColumns
-                  : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Adaptive Columns Calculation
+            final double width = constraints.maxWidth;
+            final int manualColumns = SettingsService.to.gridColumns;
+            final int crossAxisCount = manualColumns > 0
+                ? manualColumns
+                : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
 
-              return CustomScrollView(
-                slivers: [
-                  HomeAppBar(
-                    onSearchChanged: (val) => controller.search = val,
-                    isSearching: controller.isSearching,
-                  ),
-                  PokemonPagedGrid(
-                    pagingController: controller.pagingController,
-                    crossAxisCount: crossAxisCount,
-                  ),
-                ],
-              );
-            },
-          ),
+            return CustomScrollView(
+              slivers: [
+                HomeAppBar(
+                  onSearchChanged: (val) => controller.search = val,
+                  isSearching: controller.isSearching,
+                ),
+                PokemonPagedGrid(
+                  pagingController: controller.pagingController,
+                  crossAxisCount: crossAxisCount,
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

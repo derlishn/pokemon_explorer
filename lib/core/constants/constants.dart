@@ -25,6 +25,8 @@ class AppConstants {
   static const String defaultLanguageCode = 'es';
   static const String defaultCountryCode = 'ES';
   static const String defaultThemeMode = 'ThemeMode.light';
+  static const String fallbackLanguageCode = 'en';
+  static const String fallbackCountryCode = 'US';
 
   // Exports
   static const translationKeys = TranslationKeys;
