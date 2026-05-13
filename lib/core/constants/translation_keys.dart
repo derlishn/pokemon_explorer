@@ -1,0 +1,47 @@
+/// Centralized keys for translations to avoid hardcoded strings and typos
+class TranslationKeys {
+  static const String appName = 'app_name';
+  static const String login = 'login';
+  static const String user = 'user';
+  static const String password = 'password';
+  static const String invalidCredentials = 'invalid_credentials';
+  static const String home = 'home';
+  static const String searchHint = 'search_hint';
+  static const String favorites = 'favorites';
+  static const String settings = 'settings';
+  static const String storage = 'storage';
+  static const String useCacheTitle = 'use_cache_title';
+  static const String useCacheDesc = 'use_cache_desc';
+  static const String clearCacheTitle = 'clear_cache_title';
+  static const String clearCacheDesc = 'clear_cache_desc';
+  static const String cacheWarningTitle = 'cache_warning_title';
+  static const String cacheWarningMsg = 'cache_warning_msg';
+  static const String clearCacheConfirmTitle = 'clear_cache_confirm_title';
+  static const String clearCacheConfirmMsg = 'clear_cache_confirm_msg';
+  static const String cancel = 'cancel';
+  static const String confirm = 'confirm';
+  static const String disable = 'disable';
+  static const String delete = 'delete';
+  static const String theme = 'theme';
+  static const String language = 'language';
+  static const String height = 'height';
+  static const String weight = 'weight';
+  static const String baseStats = 'base_stats';
+  static const String abilities = 'abilities';
+  static const String baseExperience = 'base_experience';
+  static const String types = 'types';
+  static const String noResults = 'no_results';
+  static const String errorNetwork = 'error_network';
+  static const String errorServer = 'error_server';
+  static const String errorUnknown = 'error_unknown';
+  static const String pokemonNotFound = 'pokemon_not_found';
+  static const String retry = 'retry';
+  static const String about = 'about';
+  static const String entrenadorPokemon = 'entrenador_pokemon';
+  static const String aboutAppDesc = 'about_app_desc';
+  static const String errorTimeout = 'error_timeout';
+  static const String checkInternetConnection = 'check_internet_connection';
+  static const String badRequest = 'bad_request';
+  static const String unauthorized = 'unauthorized';
+  static const String devSignature = 'dev_signature';
+}

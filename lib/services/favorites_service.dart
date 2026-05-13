@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 
 class FavoritesService extends GetxService {
   static FavoritesService get to => Get.find();

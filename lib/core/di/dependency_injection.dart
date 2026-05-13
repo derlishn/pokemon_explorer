@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
-import 'package:pokemon_explorer/data/repository/auth_repository.dart';
+import 'package:pokemon_explorer/features/pokemon/data/repositories/pokemon_repository.dart';
+import 'package:pokemon_explorer/features/auth/data/repositories/auth_repository.dart';
 import 'package:pokemon_explorer/core/network/api_client.dart';
 import 'package:pokemon_explorer/core/storage/storage_service.dart';
 import 'package:pokemon_explorer/core/storage/secure_storage_service.dart';

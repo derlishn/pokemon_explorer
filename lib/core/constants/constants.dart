@@ -1,3 +1,5 @@
+export 'translation_keys.dart';
+
 class AppConstants {
   static const String keyIsLoggedIn = 'is_logged_in';
   static const String keyUserName = 'user_name';
