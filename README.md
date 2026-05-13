@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="pokemon_explorer_banner_1778686412154.png" width="100%" alt="Pokémon Explorer Banner" />
+  <img src="pokemon_explorer_banner.png" width="100%" alt="Pokémon Explorer Banner" />
 </p>
 
 <h1 align="center">🚀 Pokémon Explorer</h1>
@@ -11,73 +11,83 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Architecture-Clean%20%26%20Modular-green?style=flat-square" alt="Architecture" />
-  <img src="https://img.shields.io/badge/Tests-100%25%20Passing-brightgreen?style=flat-square&logo=dart" alt="Tests" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License" />
-</p>
-
-<p align="center">
-  <strong>Un explorador de Pokémon de alto rendimiento, diseñado con Clean Architecture y Reactividad Total.</strong>
+  <img src="https://img.shields.io/badge/Arquitectura-Clean%20Modular-green?style=flat-square" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Tests-100%25%20Pasando-brightgreen?style=flat-square&logo=dart" alt="Tests" />
+  <img src="https://img.shields.io/badge/Licencia-MIT-yellow.svg?style=flat-square" alt="License" />
 </p>
 
 ---
 
-## 📊 Especificaciones Técnicas
+## 📝 Descripción
 
-El proyecto está construido sobre las versiones más recientes y estables del ecosistema Flutter para garantizar la máxima compatibilidad y rendimiento.
+Pokémon Explorer es una aplicación móvil y de escritorio desarrollada con Flutter que permite a los usuarios explorar el catálogo de Pokémon consumiendo la [PokeAPI](https://pokeapi.co/). El proyecto ha sido diseñado bajo principios de **Clean Architecture** para garantizar la escalabilidad, la facilidad de testeo y el desacoplamiento de componentes.
+
+## 🛠️ Tecnologías y Herramientas
+
+- **Lenguaje**: Dart 3.10.8
+- **Framework**: Flutter 3.38.9
+- **Gestión de Estado**: GetX (Reactividad y Dependencias)
+- **Persistencia**: GetStorage (Caché local)
+- **Navegación**: GetX Routing con Middleware
+- **Pruebas**: Mocktail (Unit Testing)
+
+## 🏗️ Arquitectura del Proyecto
+
+El código se organiza de manera modular siguiendo una estructura orientada a características (*Feature-driven*):
+
+- **Core**: Contiene la infraestructura base, configuración de red, temas globales y utilidades compartidas.
+- **Features**: Cada funcionalidad (Auth, Pokemon, Favorites, Settings) está encapsulada en su propio módulo, separando la lógica de datos de la presentación.
+- **Services**: Servicios globales que gestionan el estado persistente de la aplicación (Autenticación, Favoritos, Preferencias).
+- **Routes**: Definición centralizada de la navegación y protección de rutas.
+
+## 🌟 Características Implementadas
+
+- **Consumo de API REST**: Integración completa con PokeAPI para obtener listas y detalles.
+- **Caché Offline**: Implementación de una capa de repositorio que prioriza el almacenamiento local para mejorar la experiencia del usuario.
+- **Diseño Responsivo**: Interfaz adaptada automáticamente para dispositivos móviles y resoluciones de escritorio.
+- **Búsqueda Avanzada**: Sistema de búsqueda con *debounce* para optimizar las peticiones de red.
+- **Gestión de Favoritos**: Persistencia local de Pokémon marcados por el usuario.
+
+## 📸 Capturas de Pantalla
+
+| Vista Móvil | Vista Escritorio |
+| :---: | :---: |
+| <img src="screenshots/mobile.png" width="250" alt="Vista Móvil" /> | <img src="screenshots/desktop.png" width="500" alt="Vista Escritorio" /> |
 
 ---
 
-## 📁 Folder Structure & Architecture
+## 🚀 Instalación y Ejecución
 
-The project follows a modular architecture designed for high maintainability:
+Para clonar y ejecutar esta aplicación localmente, sigue estos pasos:
 
-*   **`lib/core/`**: The foundation of the app.
-    *   `config/`: API and Avatar configurations.
-    *   `constants/`: Centralized strings, keys, and translation maps.
-    *   `network/`: Base `ApiClient` with connectivity interceptors and error handling.
-    *   `theme/`: Dynamic Design System (Light/Dark mode).
-    *   `widgets/`: Shared UI components used across multiple features.
-*   **`lib/features/`**: Modular logic grouped by functionality.
-    *   `auth/`: Login flow and credential management.
-    *   `pokemon/`: Main explorer, infinite scroll, and detailed views.
-    *   `favorites/`: User-saved Pokémon management.
-    *   `settings/`: Dynamic configuration (Theme, Language, Cache).
-*   **`lib/services/`**: Global reactive services (Auth, Favorites, Settings).
-*   **`lib/routes/`**: Centralized routing engine with middleware support.
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/derlishn/pokemon_explorer.git
+   ```
 
----
+2. **Instalar dependencias**
+   ```bash
+   flutter pub get
+   ```
 
-## 🚀 Getting Started
+3. **Ejecutar la aplicación**
+   - Para móvil/escritorio:
+     ```bash
+     flutter run
+     ```
+   - Para versiones específicas:
+     ```bash
+     flutter run -d chrome  # Web
+     flutter run -d macos   # macOS
+     ```
 
-Follow these steps to run the project locally:
+## 🧪 Ejecución de Tests
 
-### 1. Clone the Repository
+Para validar la integridad del código, puedes ejecutar la suite de pruebas unitarias:
+
 ```bash
-git clone https://github.com/your-username/pokemon_explorer.git
-cd pokemon_explorer
+flutter test --reporter expanded
 ```
 
-### 2. Install Dependencies
-Ensure you have Flutter 3.38.9 installed:
-```bash
-flutter pub get
-```
-
-### 3. Run the Application
-```bash
-flutter run
-```
-
 ---
-
-## 🧪 Testing & Quality Assurance
-
-This project includes a comprehensive suite of unit tests for all critical layers:
-
-*   **Run all tests**: `flutter test`
-*   **Detailed view**: `flutter test --reporter expanded`
-*   **Check code quality**: `dart analyze`
-
----
-*Developed as a high-quality demonstration of modern Flutter development.*
+*Este proyecto es una demostración técnica de implementación de arquitectura limpia y manejo de estados en Flutter.*
