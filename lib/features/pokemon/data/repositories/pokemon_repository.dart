@@ -50,33 +50,36 @@ class PokemonRepository {
     int id, {
     String? name,
   }) async {
-    final String cacheKey = '${AppConstants.pokemonCachePrefix}$name';
+    final String basicCacheKey = '${AppConstants.pokemonCachePrefix}$name';
+    final String fullCacheKey = '${AppConstants.pokemonDetailCachePrefix}$id';
 
-    // Return cached data if available and enabled
-    if (SettingsService.to.useCache && name != null) {
-      final cachedData = storageService.read(cacheKey);
-      if (cachedData != null) {
-        return Right(
-          PokemonDetailModel.fromListItem(
-            PokemonListItemModel.fromJson(cachedData),
-          ),
-        );
+    // 1. Try to return FULL cached detail first
+    if (SettingsService.to.useCache) {
+      final cachedFull = storageService.read(fullCacheKey);
+      if (cachedFull != null) {
+        return Right(PokemonDetailModel.fromJson(cachedFull));
       }
     }
 
     try {
+      // 2. Fetch from network if full detail not in cache
       final response = await apiClient.safeGet('${ApiEndpoints.pokemon}/$id');
-
       final detail = PokemonDetailModel.fromJson(response.body);
 
-      // Persist basic info to local storage for offline availability
-      if (SettingsService.to.useCache && name != null) {
-        final item = PokemonListItemModel(
-          name: name,
-          url: '${ApiConfig.baseUrl}${ApiEndpoints.pokemon}/$id/',
-          types: detail.types.map((t) => t.name).toList(),
-        );
-        await storageService.write(cacheKey, item.toJson());
+      // 3. Persist both basic and full info
+      if (SettingsService.to.useCache) {
+        // Cache full detail
+        await storageService.write(fullCacheKey, response.body);
+        
+        // Cache/Update basic info for list performance
+        if (name != null) {
+          final item = PokemonListItemModel(
+            name: name,
+            url: '${ApiConfig.baseUrl}${ApiEndpoints.pokemon}/$id/',
+            types: detail.types.map((t) => t.name).toList(),
+          );
+          await storageService.write(basicCacheKey, item.toJson());
+        }
       }
 
       return Right(detail);

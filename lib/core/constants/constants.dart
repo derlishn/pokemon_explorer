@@ -18,6 +18,7 @@ class AppConstants {
   
   // Prefixes
   static const String pokemonCachePrefix = 'pokemon_item_';
+  static const String pokemonDetailCachePrefix = 'pokemon_detail_';
 
   // Default Values
   static const String defaultUserName = 'Guest';

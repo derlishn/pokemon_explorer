@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/core/theme/app_colors.dart';
 import 'package:pokemon_explorer/core/layouts/adaptive_layout.dart';
 import 'package:pokemon_explorer/core/widgets/rotating_pokeball.dart';
 import 'package:pokemon_explorer/core/widgets/favorite_button.dart';
-import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/features/pokemon/presentation/detail/detail_controller.dart';
 import 'package:pokemon_explorer/features/pokemon/presentation/detail/widgets/about_tab.dart';
 import 'package:pokemon_explorer/features/pokemon/presentation/detail/widgets/stats_tab.dart';
@@ -21,52 +19,63 @@ class DetailPage extends GetView<DetailController> {
 
   @override
   Widget build(BuildContext context) {
+    // Use initial data to show Name/Image immediately
+    final initialPokemon = controller.initialData;
+    final placeholderDetail = PokemonDetailModel.fromListItem(initialPokemon);
+
     return Scaffold(
-      body: controller.obx(
-        (state) {
-          if (state == null) return const SizedBox.shrink();
-          return AdaptiveLayout(
-            mobile: _MobileDetail(pokemon: state),
-            desktop: _DesktopDetail(pokemon: state),
-          );
-        },
-        onLoading: const Center(child: CircularProgressIndicator()),
-        onError: (error) =>
-            Center(child: Text(error ?? TranslationKeys.errorUnknown.tr)),
+      body: AdaptiveLayout(
+        mobile: _MobileDetail(
+          initialPokemon: initialPokemon,
+          placeholderDetail: placeholderDetail,
+        ),
+        desktop: _DesktopDetail(
+          initialPokemon: initialPokemon,
+          placeholderDetail: placeholderDetail,
+        ),
       ),
     );
   }
 }
 
 class _MobileDetail extends GetView<DetailController> {
-  final PokemonDetailModel pokemon;
-  const _MobileDetail({required this.pokemon});
+  final PokemonListItemModel initialPokemon;
+  final PokemonDetailModel placeholderDetail;
+
+  const _MobileDetail({
+    required this.initialPokemon,
+    required this.placeholderDetail,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    final themeColor = AppColors.getTypeColor(initialPokemon.types.first);
 
     return DefaultTabController(
       length: 3,
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           DetailAppBar(
-            pokemon: pokemon,
+            pokemon: placeholderDetail,
             themeColor: themeColor,
             heroTag: controller.heroTag,
           ),
-          _MobileTitleSection(pokemon: pokemon),
+          _MobileTitleSection(pokemon: placeholderDetail),
           SliverPersistentHeader(
             pinned: true,
             delegate: PokemonTabsDelegate(themeColor: themeColor),
           ),
         ],
-        body: TabBarView(
-          children: [
-            AboutTab(pokemon: pokemon),
-            StatsTab(pokemon: pokemon),
-            AbilitiesTab(pokemon: pokemon),
-          ],
+        body: controller.obx(
+          (state) => TabBarView(
+            children: [
+              AboutTab(pokemon: state!),
+              StatsTab(pokemon: state),
+              AbilitiesTab(pokemon: state),
+            ],
+          ),
+          onLoading: const Center(child: CircularProgressIndicator()),
+          onError: (error) => Center(child: Text(error ?? '')),
         ),
       ),
     );
@@ -96,19 +105,24 @@ class _MobileTitleSection extends StatelessWidget {
 }
 
 class _DesktopDetail extends GetView<DetailController> {
-  final PokemonDetailModel pokemon;
-  const _DesktopDetail({required this.pokemon});
+  final PokemonListItemModel initialPokemon;
+  final PokemonDetailModel placeholderDetail;
+
+  const _DesktopDetail({
+    required this.initialPokemon,
+    required this.placeholderDetail,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    final themeColor = AppColors.getTypeColor(initialPokemon.types.first);
 
     return Row(
       children: [
         Expanded(
           flex: 4,
           child: _DesktopHeroSection(
-            pokemon: pokemon,
+            pokemon: placeholderDetail,
             themeColor: themeColor,
             heroTag: controller.heroTag,
           ),
@@ -122,12 +136,15 @@ class _DesktopDetail extends GetView<DetailController> {
               length: 3,
               child: Column(
                 children: [
-                  PokemonDetailInfo(pokemon: pokemon, isDesktop: true),
+                  PokemonDetailInfo(pokemon: placeholderDetail, isDesktop: true),
                   const SizedBox(height: 35),
                   Expanded(
-                    child: PokemonDetailTabs(
-                      pokemon: pokemon,
-                      themeColor: themeColor,
+                    child: controller.obx(
+                      (state) => PokemonDetailTabs(
+                        pokemon: state!,
+                        themeColor: themeColor,
+                      ),
+                      onLoading: const Center(child: CircularProgressIndicator()),
                     ),
                   ),
                 ],
@@ -161,8 +178,8 @@ class _DesktopHeroSection extends StatelessWidget {
           Center(
             child: Hero(
               tag: heroTag,
-              child: CachedNetworkImage(
-                imageUrl: pokemon.imageUrl,
+              child: Image.network(
+                pokemon.imageUrl,
                 width: 450,
                 fit: BoxFit.contain,
               ),
