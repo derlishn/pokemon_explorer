@@ -72,10 +72,6 @@ class HomePage extends GetView<HomeController> {
           ? manualColumns
           : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
 
-      if (controller.isSearching.value) {
-        return _buildSearchResults(context, crossAxisCount);
-      }
-
       return SliverPadding(
         padding: const EdgeInsets.all(16),
         sliver: PagedSliverGrid<int, PokemonListItemModel>(
@@ -133,35 +129,12 @@ class HomePage extends GetView<HomeController> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        onChanged: controller.onSearchChanged,
+        onChanged: (val) => controller.updateSearch(val),
         decoration: InputDecoration(
-          hintText: 'search_hint'.tr,
+          hintText: 'Buscar Pokémon...',
           prefixIcon: const Icon(Icons.search, size: 20),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchResults(BuildContext context, int crossAxisCount) {
-    final results = controller.filteredPokemon;
-    if (results.isEmpty) return SliverFillRemaining(child: _buildEmptyState());
-
-    return SliverPadding(
-      padding: const EdgeInsets.all(16),
-      sliver: SliverGrid(
-        key: ValueKey('search_$crossAxisCount'),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 0.85,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) =>
-              _buildAnimatedItem(results[index], index, crossAxisCount),
-          childCount: results.length,
         ),
       ),
     );

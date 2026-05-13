@@ -5,16 +5,17 @@ import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
 import 'dart:async';
 
 class HomeController extends GetxController {
-  final PokemonRepository _repository;
+  final PokemonRepository repository;
   
-  HomeController(this._repository);
+  static const _pageSize = 20;
+  final PagingController<int, PokemonListItemModel> pagingController = 
+      PagingController(firstPageKey: 0);
 
-  final PagingController<int, PokemonListItemModel> pagingController = PagingController(firstPageKey: 0);
-  final RxList<PokemonListItemModel> allPokemon = <PokemonListItemModel>[].obs;
-  final RxList<PokemonListItemModel> filteredPokemon = <PokemonListItemModel>[].obs;
-  final RxBool isSearching = false.obs;
-  
+  final RxString searchQuery = ''.obs;
   Timer? _debounce;
+  bool _isDisposed = false;
+
+  HomeController({required this.repository});
 
   @override
   void onInit() {
@@ -22,50 +23,86 @@ class HomeController extends GetxController {
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    _loadAllForSearch();
+    
+    // Listen to search changes to refresh the list
+    ever(searchQuery, (_) => _onSearchChanged());
   }
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await _repository.getAllPokemon(limit: 20, offset: pageKey);
-      final isLastPage = newItems.length < 20;
-      if (isLastPage) {
+      final List<PokemonListItemModel> newItems;
+      
+      if (searchQuery.isNotEmpty) {
+        // Simple search logic for the technical test
+        final allResults = await repository.getAllPokemon(limit: 100, offset: 0);
+        newItems = allResults.where((p) => 
+          p.name.toLowerCase().contains(searchQuery.value.toLowerCase())
+        ).toList();
+        
         pagingController.appendLastPage(newItems);
       } else {
-        final nextPageKey = pageKey + newItems.length;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
-    } catch (error) {
-      pagingController.error = error;
-    }
-  }
-
-  Future<void> _loadAllForSearch() async {
-    try {
-      final all = await _repository.getAllPokemon(limit: 1000, offset: 0);
-      allPokemon.assignAll(all);
-    } catch (e) {
-      print('Error loading all pokemon for search: $e');
-    }
-  }
-
-  void onSearchChanged(String text) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (text.isEmpty) {
-        isSearching.value = false;
-        filteredPokemon.clear();
-      } else {
-        isSearching.value = true;
-        filteredPokemon.assignAll(
-          allPokemon.where((p) => p.name.toLowerCase().contains(text.toLowerCase())).toList()
+        newItems = await repository.getAllPokemon(
+          limit: _pageSize,
+          offset: pageKey,
         );
+
+        final isLastPage = newItems.length < _pageSize;
+        if (isLastPage) {
+          pagingController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + newItems.length;
+          pagingController.appendPage(newItems, nextPageKey);
+        }
       }
+
+      // Background loading for types (Lazy Loading)
+      _fetchTypesInBackground(newItems);
+      
+    } catch (error) {
+      if (!_isDisposed) pagingController.error = error;
+    }
+  }
+
+  void _fetchTypesInBackground(List<PokemonListItemModel> items) async {
+    for (var item in items) {
+      if (_isDisposed) return;
+      if (item.types.isNotEmpty) continue;
+
+      try {
+        final detail = await repository.getPokemonDetail(item.id, name: item.name);
+        final typeNames = detail.types.map((e) => e.name).toList();
+        
+        if (_isDisposed) return;
+
+        final itemList = pagingController.itemList;
+        if (itemList != null) {
+          final index = itemList.indexWhere((element) => element.name == item.name);
+          if (index != -1) {
+            itemList[index] = item.copyWith(types: typeNames);
+            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+            pagingController.notifyListeners();
+          }
+        }
+      } catch (e) {
+        // Silent fail for background tasks
+      }
+    }
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!_isDisposed) pagingController.refresh();
     });
+  }
+
+  void updateSearch(String query) {
+    searchQuery.value = query;
   }
 
   @override
   void onClose() {
+    _isDisposed = true;
     _debounce?.cancel();
     pagingController.dispose();
     super.onClose();

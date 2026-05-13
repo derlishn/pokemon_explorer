@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+import 'package:pokemon_explorer/helpers/app_colors.dart';
 
 class PokemonCard extends StatelessWidget {
   final PokemonListItemModel pokemon;
   final VoidCallback onTap;
 
-  const PokemonCard({
-    super.key,
-    required this.pokemon,
-    required this.onTap,
-  });
+  const PokemonCard({super.key, required this.pokemon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +20,7 @@ class PokemonCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(
-          color: colorScheme.outline.withOpacity(0.1),
-          width: 1,
-        ),
+        side: BorderSide(color: colorScheme.outline.withOpacity(0.1), width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -54,7 +48,8 @@ class PokemonCard extends StatelessWidget {
                         placeholder: (context, url) => const Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                     ),
                   ),
@@ -67,15 +62,52 @@ class PokemonCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colorScheme.surfaceVariant.withOpacity(0.5),
               ),
-              child: Text(
-                pokemon.name.capitalizeFirst!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    pokemon.name.capitalizeFirst!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: pokemon.types
+                        .take(2)
+                        .map(
+                          (type) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.getTypeColor(
+                                type,
+                              ).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: AppColors.getTypeColor(type),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Text(
+                              type.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.getTypeColor(type),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
               ),
             ),
           ],

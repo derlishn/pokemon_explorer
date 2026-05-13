@@ -1,3 +1,5 @@
+import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+
 class PokemonDetailModel {
   final int id;
   final String name;
@@ -35,6 +37,20 @@ class PokemonDetailModel {
       abilities: (json['abilities'] as List)
           .map((i) => PokemonAbilityModel.fromJson(i))
           .toList(),
+    );
+  }
+
+  /// Helper to create a partial detail from a list item (cached types)
+  factory PokemonDetailModel.fromListItem(PokemonListItemModel item) {
+    return PokemonDetailModel(
+      id: item.id,
+      name: item.name,
+      height: 0,
+      weight: 0,
+      baseExperience: 0,
+      types: item.types.map((t) => PokemonTypeModel(name: t)).toList(),
+      stats: [],
+      abilities: [],
     );
   }
 
