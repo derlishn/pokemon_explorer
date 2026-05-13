@@ -63,6 +63,7 @@ class PokemonCard extends StatelessWidget {
                 color: colorScheme.surfaceVariant.withOpacity(0.5),
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
+import 'package:pokemon_explorer/presentation/widgets/app_snackbar.dart';
 
 class LoginController extends GetxController {
   final userController = TextEditingController();
@@ -14,12 +15,9 @@ class LoginController extends GetxController {
       // For this demo, any non-empty credentials work
       AuthService.to.login(user);
     } else {
-      Get.snackbar(
-        'login'.tr,
-        'invalid_credentials'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.1),
-        colorText: Colors.red,
+      AppSnackbar.error(
+        title: 'login'.tr,
+        message: 'invalid_credentials'.tr,
       );
     }
   }

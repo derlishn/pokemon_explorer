@@ -5,6 +5,7 @@ import 'package:pokemon_explorer/presentation/widgets/section_header.dart';
 import 'package:pokemon_explorer/presentation/settings/widgets/user_profile_card.dart';
 import 'package:pokemon_explorer/presentation/settings/widgets/about_app_card.dart';
 import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
+import 'package:pokemon_explorer/presentation/widgets/app_snackbar.dart';
 import 'settings_controller.dart';
 
 class SettingsPage extends GetView<SettingsController> {
@@ -24,7 +25,6 @@ class SettingsPage extends GetView<SettingsController> {
     );
   }
 
-  // --- MOBILE LAYOUT (Classic List) ---
   Widget _buildMobileLayout(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
@@ -32,83 +32,75 @@ class SettingsPage extends GetView<SettingsController> {
     );
   }
 
-  // --- DESKTOP LAYOUT (Grid Dashboard) ---
   Widget _buildDesktopLayout(BuildContext context) {
-    return Center(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          children: [
-            // Hero Profile Section
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: UserProfileCard(
-                  userName: controller.userName,
-                  onLogout: () => controller.logout(),
-                ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(40),
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1000),
+          child: Column(
+            children: [
+              UserProfileCard(
+                userName: controller.userName,
+                onLogout: () => controller.logout(),
               ),
-            ),
-            const SizedBox(height: 30),
-            
-            // Settings Grid
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 1.5, // Increased to give more vertical space
-                crossAxisSpacing: 30,
-                mainAxisSpacing: 30,
+              const SizedBox(height: 32),
+              // Using Wrap instead of GridView to avoid infinite constraint issues
+              Wrap(
+                spacing: 24,
+                runSpacing: 24,
                 children: [
-                  _buildSectionCard(context, 'theme'.tr, [
+                  _buildSectionBox(context, 'theme'.tr, 450, [
                     _buildThemeToggle(),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     _buildAccentColorPicker(context),
                   ]),
-                  _buildSectionCard(context, 'storage'.tr, [
+                  _buildSectionBox(context, 'storage'.tr, 450, [
                     _buildCacheToggle(context),
                     _buildClearCacheButton(context),
                   ]),
-                  _buildSectionCard(context, 'Layout', [
+                  _buildSectionBox(context, 'Layout', 450, [
                     _buildGridSelector(),
                   ]),
-                  _buildSectionCard(context, 'language'.tr, [
+                  _buildSectionBox(context, 'language'.tr, 450, [
                     _buildLanguageOption(context, 'Español', const Locale('es', 'ES'), '🇪🇸'),
                     _buildLanguageOption(context, 'English', const Locale('en', 'US'), '🇺🇸'),
                   ]),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 48),
+              const AboutAppCard(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionCard(BuildContext context, String title, List<Widget> children) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView( // Add scroll for safety
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: SettingsService.to.accentColor,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 15),
-              ...children,
-            ],
+  // A fixed-width box for desktop layout sections
+  Widget _buildSectionBox(BuildContext context, String title, double width, List<Widget> children) {
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: SettingsService.to.accentColor,
+              letterSpacing: 1.2,
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
@@ -206,7 +198,6 @@ class SettingsPage extends GetView<SettingsController> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.errorContainer,
               foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-              elevation: 0,
             ),
             onPressed: () {
               SettingsService.to.updateUseCache(false);
@@ -232,20 +223,13 @@ class SettingsPage extends GetView<SettingsController> {
             child: Text('cancel'.tr),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
             onPressed: () {
               SettingsService.to.clearCache();
               Get.back();
-              Get.snackbar(
-                'Caché Limpia',
-                'Se han borrado los datos de Pokémon correctamente.',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
+              AppSnackbar.success(
+                title: 'Caché Limpia',
+                message: 'Se han borrado los datos correctamente.',
               );
             },
             child: Text('delete'.tr),
@@ -261,21 +245,21 @@ class SettingsPage extends GetView<SettingsController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Color de Acento', style: TextStyle(fontWeight: FontWeight.w500)),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 12,
+          runSpacing: 12,
           children: colors.map((color) {
             return Obx(() => GestureDetector(
               onTap: () => SettingsService.to.updateAccentColor(color),
               child: Container(
-                width: 28,
-                height: 28,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: color,
                   shape: BoxShape.circle,
                   border: SettingsService.to.accentColor == color
-                      ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2)
+                      ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 3)
                       : null,
                 ),
               ),
@@ -288,11 +272,17 @@ class SettingsPage extends GetView<SettingsController> {
 
   Widget _buildGridSelector() {
     return Obx(() {
-      // PRO FIX: Ensure the value exists in the current options list to avoid Dropdown assertion error
       final allowedValues = [0, 1, 2];
       int currentValue = SettingsService.to.gridColumns;
+      
+      // Safety check: if value is not in [0, 1, 2], return a simple text or fix it
       if (!allowedValues.contains(currentValue)) {
-        currentValue = 0; // Default to Auto if saved value is invalid
+        return const ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(Icons.grid_view),
+          title: Text('Columnas en Rejilla'),
+          subtitle: Text('Cargando...'),
+        );
       }
 
       return ListTile(

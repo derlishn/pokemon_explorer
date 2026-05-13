@@ -109,14 +109,6 @@ class LoginPage extends GetView<LoginController> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {}, // Optional: Forgot password
-                      child: Text(
-                        '¿Olvidaste tu contraseña?',
-                        style: TextStyle(color: colorScheme.primary.withOpacity(0.7)),
-                      ),
-                    ),
                   ],
                 ),
               ),
