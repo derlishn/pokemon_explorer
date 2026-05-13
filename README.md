@@ -57,6 +57,20 @@ El código se organiza de manera modular siguiendo una estructura orientada a ca
 - **Credenciales de Acceso**: Implementación del login obligatorio con validación local (Usuario: `flutter` / Contraseña: `flutter`).
 - **Flujo de Navegación**: Splash Screen inicial, seguido de la pantalla de Login y acceso al Home solo tras autenticación exitosa.
 
+### Personalización y Experiencia de Usuario
+- **Soporte Multiidioma**: Sistema de internacionalización (i18n) que permite el cambio dinámico entre Inglés y Español.
+- **Temas Dinámicos**: Soporte nativo para Modo Oscuro y Modo Claro con persistencia de preferencia.
+- **Personalización de Interfaz**: Selección de colores de acento y configuración dinámica de columnas en la cuadrícula.
+- **Perfil de Usuario**: Sección dedicada con selección de avatares Pokémon animados y persistencia de datos.
+
+## Guía de Pruebas de Robustez (Modo Offline)
+Para verificar la estabilidad y el manejo de datos locales de la aplicación, se sugieren los siguientes pasos:
+1. **Carga Inicial**: Navegue por la lista y entre a varios Pokémon para generar caché.
+2. **Modo Avión / Sin Red**: Desconecte el internet del dispositivo.
+3. **Navegación Continua**: Regrese al Home o entre a los Pokémon ya visitados; la app cargará los datos instantáneamente desde el disco.
+4. **Búsqueda Offline**: Use el buscador sin conexión; el sistema filtrará los resultados basándose únicamente en los datos cacheados.
+5. **Reconstrucción de Lista**: Si la lista principal no está disponible, el repositorio reconstruirá la vista utilizando los objetos individuales guardados, evitando pantallas de error vacías.
+
 ## Capturas de Pantalla
 
 | Vista Móvil | Vista Escritorio |

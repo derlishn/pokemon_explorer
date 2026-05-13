@@ -6,8 +6,15 @@ import 'package:pokemon_explorer/features/pokemon/presentation/home/home_control
 import 'package:pokemon_explorer/features/pokemon/data/repositories/pokemon_repository.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
+import 'package:pokemon_explorer/services/connectivity_service.dart';
 
 class MockPokemonRepository extends Mock implements PokemonRepository {}
+class MockConnectivityService extends Mock implements ConnectivityService {
+  @override
+  InternalFinalCallback<void> get onStart => InternalFinalCallback<void>(callback: () {});
+  @override
+  InternalFinalCallback<void> get onDelete => InternalFinalCallback<void>(callback: () {});
+}
 class MockSettingsService extends Mock implements SettingsService {
   @override
   InternalFinalCallback<void> get onStart => InternalFinalCallback<void>(callback: () {});
@@ -19,15 +26,21 @@ void main() {
   late HomeController controller;
   late MockPokemonRepository mockRepository;
   late MockSettingsService mockSettings;
+  late MockConnectivityService mockConnectivity;
 
   setUp(() {
     mockRepository = MockPokemonRepository();
     mockSettings = MockSettingsService();
+    mockConnectivity = MockConnectivityService();
 
     Get.put<SettingsService>(mockSettings);
+    Get.put<ConnectivityService>(mockConnectivity);
     
     // Default mock behavior
     when(() => mockSettings.gridColumns).thenReturn(2);
+    when(() => mockSettings.refreshSignalRx).thenReturn(0.obs);
+    when(() => mockConnectivity.isConnected).thenReturn(true);
+    when(() => mockConnectivity.isConnectedRx).thenReturn(true.obs);
 
     controller = Get.put(HomeController(repository: mockRepository));
   });

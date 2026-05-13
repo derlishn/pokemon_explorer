@@ -39,6 +39,10 @@ void main() {
 
     // Register mock SettingsService in Get
     Get.put<SettingsService>(mockSettings);
+    when(() => mockSettings.useCache).thenReturn(true);
+    when(() => mockStorage.getKeys()).thenReturn([]);
+    when(() => mockStorage.write(any(), any())).thenAnswer((_) async => {});
+    when(() => mockStorage.read(any())).thenReturn(null);
 
     repository = PokemonRepository(
       apiClient: mockApiClient,
@@ -120,7 +124,7 @@ void main() {
         // assert
         expect(result.isLeft(), true);
         result.fold(
-          (failure) => expect(failure, isA<ServerFailure>()),
+          (failure) => expect(failure, isA<ConnectionFailure>()),
           (_) => fail('Should be Left'),
         );
       });
