@@ -1,46 +1,32 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Brand Colors
+  static const Color primary = Color(0xFFFF5252);
+  static const Color secondary = Color(0xFF3B4CCA);
+  
+  // Neutral Colors
+  static const Color surfaceLight = Color(0xFFF5F5F5);
+  static const Color surfaceDark = Color(0xFF121212);
+  
+  // Pokemon Types (Utility)
   static Color getTypeColor(String type) {
     switch (type.toLowerCase()) {
-      case 'fire':
-        return Colors.redAccent;
-      case 'water':
-        return Colors.blueAccent;
-      case 'grass':
-        return Colors.greenAccent[700]!;
-      case 'electric':
-        return Colors.yellow[700]!;
-      case 'psychic':
-        return Colors.purpleAccent;
-      case 'ice':
-        return Colors.cyanAccent;
-      case 'dragon':
-        return Colors.indigoAccent;
-      case 'dark':
-        return Colors.grey[800]!;
-      case 'fairy':
-        return Colors.pinkAccent;
-      case 'normal':
-        return Colors.grey;
-      case 'fighting':
-        return Colors.orange[900]!;
-      case 'flying':
-        return Colors.indigo[300]!;
-      case 'poison':
-        return Colors.purple;
-      case 'ground':
-        return Colors.brown;
-      case 'rock':
-        return Colors.blueGrey;
-      case 'bug':
-        return Colors.lightGreen;
-      case 'ghost':
-        return Colors.deepPurple;
-      case 'steel':
-        return Colors.blueGrey[300]!;
-      default:
-        return Colors.grey;
+      case 'fire': return Colors.orange;
+      case 'water': return Colors.blue;
+      case 'grass': return Colors.green;
+      case 'electric': return Colors.yellow[700]!;
+      case 'poison': return Colors.purple;
+      case 'psychic': return Colors.pink;
+      case 'rock': return Colors.brown;
+      case 'ice': return Colors.cyan;
+      case 'ghost': return Colors.indigo;
+      case 'dragon': return Colors.deepPurple;
+      case 'bug': return Colors.lightGreen;
+      case 'flying': return Colors.indigo[300]!;
+      case 'fighting': return Colors.red[900]!;
+      case 'normal': return Colors.grey;
+      default: return Colors.blueGrey;
     }
   }
 }

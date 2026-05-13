@@ -1,41 +1,34 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pokemon_explorer/helpers/constants.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
 
 class AuthService extends GetxService {
   static AuthService get to => Get.find();
-
+  
   final _box = GetStorage();
-  final _isLoggedIn = false.obs;
-  final userName = ''.obs;
-
-  bool get isLoggedIn => _isLoggedIn.value;
+  final isLoggedIn = false.obs;
+  final userName = 'Invitado'.obs;
 
   Future<AuthService> init() async {
-    _isLoggedIn.value = _box.read('is_logged_in') ?? false;
-    userName.value = _box.read('user_name') ?? 'Entrenador';
+    isLoggedIn.value = _box.read(AppConstants.keyIsLoggedIn) ?? false;
+    userName.value = _box.read(AppConstants.keyUserName) ?? 'Invitado';
     return this;
   }
 
-  void login(String user, String password) {
-    if (user == 'flutter' && password == 'flutter') {
-      _isLoggedIn.value = true;
-      userName.value = user;
-      _box.write('is_logged_in', true);
-      _box.write('user_name', user);
-      Get.offAllNamed(AppRoutes.HOME);
-    } else {
-      Get.snackbar(
-        'login'.tr,
-        'invalid_credentials'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
+  void login(String user) {
+    isLoggedIn.value = true;
+    userName.value = user;
+    _box.write(AppConstants.keyIsLoggedIn, true);
+    _box.write(AppConstants.keyUserName, user);
+    Get.offAllNamed(AppRoutes.HOME);
   }
 
   void logout() {
-    _isLoggedIn.value = false;
-    _box.write('is_logged_in', false);
+    isLoggedIn.value = false;
+    userName.value = 'Invitado';
+    _box.remove(AppConstants.keyIsLoggedIn);
+    _box.remove(AppConstants.keyUserName);
     Get.offAllNamed(AppRoutes.LOGIN);
   }
 }

@@ -1,23 +1,17 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
-import 'package:pokemon_explorer/services/global_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';
-import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
-    // 1. Storage
-    await GetStorage.init();
-
-    // 2. Global Services (Initialized in order)
-    await Get.putAsync(() => GlobalService().init());
-    await Get.putAsync(() => FavoritesService().init());
-    await Get.putAsync(() => AuthService().init());
+    // Services
     await Get.putAsync(() => SettingsService().init());
+    await Get.putAsync(() => AuthService().init());
+    await Get.putAsync(() => FavoritesService().init());
 
-    // 3. Repositories (Lazy loaded)
-    Get.lazyPut<IPokemonRepository>(() => PokemonRepositoryImpl());
+    // Repositories
+    Get.lazyPut(() => PokemonRepository());
   }
 }

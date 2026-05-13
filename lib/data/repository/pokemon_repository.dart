@@ -1,30 +1,31 @@
-import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
-import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
-import 'package:pokemon_explorer/helpers/constants.dart';
-import 'package:pokemon_explorer/services/global_service.dart';
 import 'package:get/get.dart';
+import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
 
-abstract class IPokemonRepository {
-  Future<PokemonListResponse> getPokemonList({int offset = 0, int limit = 20});
-  Future<PokemonDetailModel> getPokemonDetail(String idOrName);
-}
+class PokemonRepository {
+  final _connect = GetConnect();
 
-class PokemonRepositoryImpl implements IPokemonRepository {
-  final GlobalService _api = Get.find<GlobalService>();
+  Future<List<PokemonListItemModel>> getAllPokemon({int limit = 151, int offset = 0}) async {
+    final response = await _connect.get(
+      'https://pokeapi.co/api/v2/pokemon',
+      query: {'limit': limit.toString(), 'offset': offset.toString()},
+    );
 
-  @override
-  Future<PokemonListResponse> getPokemonList({int offset = 0, int limit = 20}) async {
-    final response = await _api.get(Endpoints.pokemon, queryParams: {
-      'offset': offset.toString(),
-      'limit': limit.toString(),
-    });
-    
-    return PokemonListResponse.fromJson(response);
+    if (response.status.hasError) {
+      throw Exception('error_network'.tr);
+    }
+
+    final List results = response.body['results'];
+    return results.map((e) => PokemonListItemModel.fromJson(e)).toList();
   }
 
-  @override
-  Future<PokemonDetailModel> getPokemonDetail(String idOrName) async {
-    final response = await _api.get('${Endpoints.pokemon}/$idOrName');
-    return PokemonDetailModel.fromJson(response);
+  Future<PokemonDetailModel> getPokemonDetail(int id) async {
+    final response = await _connect.get('https://pokeapi.co/api/v2/pokemon/$id');
+
+    if (response.status.hasError) {
+      throw Exception('error_network'.tr);
+    }
+
+    return PokemonDetailModel.fromJson(response.body);
   }
 }

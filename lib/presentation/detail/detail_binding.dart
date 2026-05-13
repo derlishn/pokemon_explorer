@@ -5,8 +5,6 @@ import 'detail_controller.dart';
 class DetailBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<DetailController>(
-      () => DetailController(Get.find<IPokemonRepository>()),
-    );
+    Get.lazyPut(() => DetailController(Get.find<PokemonRepository>()));
   }
 }

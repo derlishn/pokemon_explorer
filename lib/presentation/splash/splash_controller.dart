@@ -1,17 +1,18 @@
 import 'package:get/get.dart';
-import '../../../routes/app_pages.dart';
-import '../../../services/auth_service.dart';
+import 'package:pokemon_explorer/routes/app_pages.dart';
+import 'package:pokemon_explorer/services/auth_service.dart';
 
 class SplashController extends GetxController {
   @override
-  void onInit() {
-    super.onInit();
-    _navigateToNext();
+  void onReady() {
+    super.onReady();
+    _init();
   }
 
-  void _navigateToNext() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (AuthService.to.isLoggedIn) {
+  Future<void> _init() async {
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (AuthService.to.isLoggedIn.value) {
       Get.offAllNamed(AppRoutes.HOME);
     } else {
       Get.offAllNamed(AppRoutes.LOGIN);

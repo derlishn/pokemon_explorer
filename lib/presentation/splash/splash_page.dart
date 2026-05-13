@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../theme/app_colors.dart';
+import 'package:pokemon_explorer/helpers/app_colors.dart';
 import 'splash_controller.dart';
 
 class SplashPage extends GetView<SplashController> {
@@ -9,47 +9,24 @@ class SplashPage extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-        ),
+      backgroundColor: AppColors.primary,
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Creative Logo Placeholder
-            TweenAnimationBuilder(
-              duration: const Duration(seconds: 2),
-              tween: Tween<double>(begin: 0, end: 1),
-              builder: (context, double value, child) {
-                return Opacity(
-                  opacity: value,
-                  child: Transform.scale(
-                    scale: value,
-                    child: child,
-                  ),
-                );
-              },
-              child: const Icon(
-                Icons.catching_pokemon,
-                size: 120,
-                color: Colors.white,
-              ),
+            const Icon(
+              Icons.catching_pokemon,
+              size: 100,
+              color: Colors.white,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Text(
               'app_name'.tr,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 2,
               ),
-            ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ],
         ),

@@ -7,44 +7,23 @@ class AppTheme {
   static ThemeData get dark => _buildTheme(Brightness.dark);
 
   static ThemeData _buildTheme(Brightness brightness) {
-    final bool isDark = brightness == Brightness.dark;
-    final ColorScheme colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: brightness,
-      primary: AppColors.primary,
-      secondary: AppColors.secondary,
-      surface: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-    );
-
     return ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme,
-      textTheme: GoogleFonts.outfitTextTheme(
-        isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme,
+      brightness: brightness,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        brightness: brightness,
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        surface: brightness == Brightness.light 
+            ? AppColors.surfaceLight 
+            : AppColors.surfaceDark,
       ),
-      appBarTheme: AppBarTheme(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
+      textTheme: GoogleFonts.outfitTextTheme(),
+      // Fix: Use CardTheme for the cardTheme property
+      cardTheme: CardTheme(
         elevation: 0,
-        titleTextStyle: GoogleFonts.outfit(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: isDark ? Colors.white : Colors.black87,
-        ),
-      ),
-      cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
