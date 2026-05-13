@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
+import 'package:pokemon_explorer/services/settings_service.dart';
 
 class PokemonRepository {
   final _connect = GetConnect();
@@ -14,7 +15,7 @@ class PokemonRepository {
       final response = await _connect.get(
         'https://pokeapi.co/api/v2/pokemon',
         query: {'limit': limit.toString(), 'offset': offset.toString()},
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(const Duration(seconds: 15));
 
       if (response.status.hasError) {
         return _handleError(response);
@@ -29,8 +30,8 @@ class PokemonRepository {
 
   /// Fetches detail for a single pokemon, checking cache first
   Future<PokemonDetailModel> getPokemonDetail(int id, {String? name}) async {
-    // Check cache if name is provided
-    if (name != null) {
+    // Check cache ONLY if enabled in settings
+    if (SettingsService.to.useCache && name != null) {
       final cachedData = _cache.read(_cachePrefix + name);
       if (cachedData != null) {
         return PokemonDetailModel.fromListItem(PokemonListItemModel.fromJson(cachedData));
@@ -47,8 +48,8 @@ class PokemonRepository {
 
       final detail = PokemonDetailModel.fromJson(response.body);
       
-      // Save basic info back to cache if name is provided
-      if (name != null) {
+      // Save basic info to cache ONLY if enabled in settings
+      if (SettingsService.to.useCache && name != null) {
         final item = PokemonListItemModel(
           name: name,
           url: 'https://pokeapi.co/api/v2/pokemon/$id/',

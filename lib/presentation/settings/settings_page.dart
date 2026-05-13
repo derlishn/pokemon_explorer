@@ -56,13 +56,17 @@ class SettingsPage extends GetView<SettingsController> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                childAspectRatio: 2.5,
+                childAspectRatio: 2.2,
                 crossAxisSpacing: 30,
                 mainAxisSpacing: 30,
                 children: [
                   _buildSectionCard(context, 'theme'.tr, [
                     _buildThemeToggle(),
                     _buildAccentColorPicker(context),
+                  ]),
+                  _buildSectionCard(context, 'storage'.tr, [
+                    _buildCacheToggle(context),
+                    _buildClearCacheButton(context),
                   ]),
                   _buildSectionCard(context, 'Layout', [
                     _buildGridSelector(),
@@ -71,15 +75,8 @@ class SettingsPage extends GetView<SettingsController> {
                     _buildLanguageOption(context, 'Español', const Locale('es', 'ES'), '🇪🇸'),
                     _buildLanguageOption(context, 'English', const Locale('en', 'US'), '🇺🇸'),
                   ]),
-                  _buildSectionCard(context, 'Sobre esta App', [
-                    const Expanded(child: SingleChildScrollView(child: AboutAppCard())),
-                  ]),
                 ],
               ),
-            ),
-            const Text(
-              'Pokémon Explorer v1.1.0',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ],
         ),
@@ -125,6 +122,10 @@ class SettingsPage extends GetView<SettingsController> {
       _buildThemeToggle(),
       _buildAccentColorPicker(context),
       const Divider(),
+      SectionHeader(title: 'storage'.tr),
+      _buildCacheToggle(context),
+      _buildClearCacheButton(context),
+      const Divider(),
       const SectionHeader(title: 'Layout'),
       _buildGridSelector(),
       const Divider(),
@@ -141,14 +142,113 @@ class SettingsPage extends GetView<SettingsController> {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Obx(() => Icon(
-        SettingsService.to.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-        color: SettingsService.to.isDarkMode ? Colors.amber : Colors.blue,
+        SettingsService.to.themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+        color: SettingsService.to.themeMode == ThemeMode.dark ? Colors.amber : Colors.blue,
       )),
       title: const Text('Modo Oscuro'),
       trailing: Obx(() => Switch.adaptive(
-        value: SettingsService.to.isDarkMode,
-        onChanged: (_) => SettingsService.to.toggleTheme(),
+        value: SettingsService.to.themeMode == ThemeMode.dark,
+        onChanged: (val) => SettingsService.to.updateThemeMode(val ? ThemeMode.dark : ThemeMode.light),
       )),
+    );
+  }
+
+  Widget _buildCacheToggle(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.cached),
+      title: Text('use_cache_title'.tr),
+      subtitle: Text('use_cache_desc'.tr),
+      trailing: Obx(() => Switch.adaptive(
+        value: SettingsService.to.useCache,
+        onChanged: (val) {
+          if (!val) {
+            _showCacheWarning(context);
+          } else {
+            SettingsService.to.updateUseCache(true);
+          }
+        },
+      )),
+    );
+  }
+
+  Widget _buildClearCacheButton(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent),
+      title: Text('clear_cache_title'.tr),
+      subtitle: Text('clear_cache_desc'.tr),
+      onTap: () => _showClearCacheConfirm(context),
+    );
+  }
+
+  void _showCacheWarning(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            const SizedBox(width: 10),
+            Text('cache_warning_title'.tr),
+          ],
+        ),
+        content: Text('cache_warning_msg'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('cancel'.tr),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.errorContainer,
+              foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+              elevation: 0,
+            ),
+            onPressed: () {
+              SettingsService.to.updateUseCache(false);
+              Get.back();
+            },
+            child: Text('disable'.tr),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showClearCacheConfirm(BuildContext context) {
+    final count = SettingsService.to.getCachedCount();
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text('clear_cache_confirm_title'.tr),
+        content: Text('clear_cache_confirm_msg'.tr.replaceFirst('@count', count.toString())),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('cancel'.tr),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            onPressed: () {
+              SettingsService.to.clearCache();
+              Get.back();
+              Get.snackbar(
+                'Caché Limpia',
+                'Se han borrado los datos de Pokémon correctamente.',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            },
+            child: Text('delete'.tr),
+          ),
+        ],
+      ),
     );
   }
 
@@ -173,7 +273,7 @@ class SettingsPage extends GetView<SettingsController> {
                     color: color,
                     shape: BoxShape.circle,
                     border: SettingsService.to.accentColor.value == color.value
-                        ? Border.all(color: Theme.of(context).colorScheme.onBackground, width: 2)
+                        ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2)
                         : null,
                   ),
                 ),
@@ -207,13 +307,15 @@ class SettingsPage extends GetView<SettingsController> {
 
   Widget _buildLanguageOption(BuildContext context, String name, Locale locale, String flag) {
     return Obx(() {
-      final isSelected = SettingsService.to.locale.languageCode == locale.languageCode;
+      final isSelected = Get.locale?.languageCode == locale.languageCode;
       return ListTile(
         contentPadding: EdgeInsets.zero,
         leading: Text(flag, style: const TextStyle(fontSize: 24)),
         title: Text(name),
         trailing: isSelected ? Icon(Icons.check_circle, color: SettingsService.to.accentColor) : null,
-        onTap: () => SettingsService.to.updateLocale(locale),
+        onTap: () {
+          Get.updateLocale(locale);
+        },
       );
     });
   }

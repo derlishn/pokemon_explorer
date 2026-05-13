@@ -42,8 +42,6 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return ListTile(
       leading: GestureDetector(
         onTap: () => _showAvatarPicker(context),

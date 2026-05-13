@@ -1,78 +1,122 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:pokemon_explorer/helpers/constants.dart';
 
 class SettingsService extends GetxService {
   static SettingsService get to => Get.find();
-  
-  final _box = GetStorage();
-  
-  // Reactive states
-  final RxBool _isDarkMode = false.obs;
-  final Rx<Locale> _locale = const Locale('en', 'US').obs;
-  final RxInt _gridColumns = 0.obs;
-  
-  // Neutral Color
-  static final int neutralColorValue = Colors.grey.value;
-  final RxInt _accentColorValue = neutralColorValue.obs;
+  final _storage = GetStorage();
 
-  // Profile Avatar (Default Pikachu)
-  final RxString _profileAvatar = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'.obs;
+  // Observable states
+  final Rx<ThemeMode> _themeMode = ThemeMode.system.obs;
+  final Rx<Color> _accentColor = Rx<Color>(Colors.grey); 
+  final RxInt _gridColumns = 0.obs; 
+  final RxBool _useCache = true.obs;
+  final RxString _profileAvatar = 'assets/avatars/trainer_m.png'.obs;
+  final Rx<Locale> _locale = const Locale('es', 'ES').obs;
 
-  bool get isDarkMode => _isDarkMode.value;
-  Locale get locale => _locale.value;
+  ThemeMode get themeMode => _themeMode.value;
+  Color get accentColor => _accentColor.value;
   int get gridColumns => _gridColumns.value;
-  Color get accentColor => Color(_accentColorValue.value);
+  bool get useCache => _useCache.value;
   String get profileAvatar => _profileAvatar.value;
+  Locale get locale => _locale.value;
 
-  ThemeMode get themeMode {
-    final bool? isDark = _box.read(AppConstants.keyIsDarkMode);
-    if (isDark == null) return ThemeMode.system;
-    return isDark ? ThemeMode.dark : ThemeMode.light;
-  }
+  bool get isDarkMode => _themeMode.value == ThemeMode.dark;
 
+  // Essential for dependency injection
   Future<SettingsService> init() async {
-    _isDarkMode.value = _box.read(AppConstants.keyIsDarkMode) ?? false;
-    _gridColumns.value = _box.read('grid_columns') ?? 0;
-    _accentColorValue.value = _box.read('accent_color') ?? neutralColorValue;
-    _profileAvatar.value = _box.read('profile_avatar') ?? 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png';
-    
-    final String? langCode = _box.read(AppConstants.keyLanguage);
-    if (langCode != null) {
-      _locale.value = Locale(langCode);
-    } else {
-      _locale.value = Get.deviceLocale ?? const Locale('en', 'US');
-    }
-    
+    _loadSettings();
     return this;
   }
 
-  void toggleTheme() {
-    _isDarkMode.value = !_isDarkMode.value;
-    Get.changeThemeMode(_isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
-    _box.write(AppConstants.keyIsDarkMode, _isDarkMode.value);
+  void _loadSettings() {
+    // Theme
+    final savedTheme = _storage.read('theme_mode');
+    if (savedTheme != null) {
+      _themeMode.value = ThemeMode.values.firstWhere((e) => e.toString() == savedTheme);
+    }
+
+    // Color
+    final savedColor = _storage.read('accent_color');
+    if (savedColor != null) {
+      _accentColor.value = Color(savedColor);
+    }
+
+    // Columns
+    final savedColumns = _storage.read('grid_columns');
+    if (savedColumns != null) {
+      _gridColumns.value = savedColumns;
+    }
+
+    // Cache
+    final savedCache = _storage.read('use_cache');
+    if (savedCache != null) {
+      _useCache.value = savedCache;
+    }
+
+    // Avatar
+    final savedAvatar = _storage.read('profile_avatar');
+    if (savedAvatar != null) {
+      _profileAvatar.value = savedAvatar;
+    }
+
+    // Locale
+    final langCode = _storage.read('lang_code');
+    final countryCode = _storage.read('country_code');
+    if (langCode != null && countryCode != null) {
+      _locale.value = Locale(langCode, countryCode);
+    }
   }
 
-  void updateLocale(Locale newLocale) {
-    _locale.value = newLocale;
-    Get.updateLocale(newLocale);
-    _box.write(AppConstants.keyLanguage, newLocale.languageCode);
+  void updateThemeMode(ThemeMode mode) {
+    _themeMode.value = mode;
+    Get.changeThemeMode(mode);
+    _storage.write('theme_mode', mode.toString());
+  }
+
+  void toggleTheme() {
+    updateThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+  }
+
+  void updateAccentColor(Color color) {
+    _accentColor.value = color;
+    _storage.write('accent_color', color.value);
+    Get.forceAppUpdate();
   }
 
   void updateGridColumns(int count) {
     _gridColumns.value = count;
-    _box.write('grid_columns', count);
+    _storage.write('grid_columns', count);
   }
 
-  void updateAccentColor(Color color) {
-    _accentColorValue.value = color.value;
-    _box.write('accent_color', color.value);
-    Get.forceAppUpdate();
+  void updateUseCache(bool value) {
+    _useCache.value = value;
+    _storage.write('use_cache', value);
   }
 
-  void updateAvatar(String url) {
-    _profileAvatar.value = url;
-    _box.write('profile_avatar', url);
+  void updateAvatar(String path) {
+    _profileAvatar.value = path;
+    _storage.write('profile_avatar', path);
+  }
+
+  void updateLocale(Locale loc) {
+    _locale.value = loc;
+    Get.updateLocale(loc);
+    _storage.write('lang_code', loc.languageCode);
+    _storage.write('country_code', loc.countryCode);
+  }
+
+  int getCachedCount() {
+    final allKeys = _storage.getKeys();
+    return allKeys.where((key) => key.toString().startsWith('pokemon_item_')).length;
+  }
+
+  void clearCache() {
+    final allKeys = _storage.getKeys().toList();
+    for (var key in allKeys) {
+      if (key.toString().startsWith('pokemon_item_')) {
+        _storage.remove(key);
+      }
+    }
   }
 }
