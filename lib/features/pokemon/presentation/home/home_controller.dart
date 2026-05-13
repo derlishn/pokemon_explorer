@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/features/pokemon/data/repositories/pokemon_repository.dart';
 import 'package:pokemon_explorer/services/connectivity_service.dart';
@@ -7,9 +8,9 @@ import 'dart:async';
 
 class HomeController extends GetxController {
   final PokemonRepository repository;
-  
+
   static const _pageSize = 20;
-  final PagingController<int, PokemonListItemModel> pagingController = 
+  final PagingController<int, PokemonListItemModel> pagingController =
       PagingController(firstPageKey: 0);
 
   final RxString searchQuery = ''.obs;
@@ -27,9 +28,9 @@ class HomeController extends GetxController {
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    
+
     ever(searchQuery, (_) => _onSearchChanged());
-    
+
     // Auto-retry when connection returns
     ever(ConnectivityService.to.isConnectedRx, (bool connected) {
       if (connected && pagingController.error != null) {
@@ -48,9 +49,13 @@ class HomeController extends GetxController {
             if (!_isDisposed) pagingController.error = failure.message.tr;
           },
           (allResults) {
-            final newItems = allResults.where((p) => 
-              p.name.toLowerCase().contains(searchQuery.value.toLowerCase())
-            ).toList();
+            final newItems = allResults
+                .where(
+                  (p) => p.name.toLowerCase().contains(
+                    searchQuery.value.toLowerCase(),
+                  ),
+                )
+                .toList();
             pagingController.appendLastPage(newItems);
             _fetchTypesInBackground(newItems);
             isSearching.value = false;
@@ -91,8 +96,11 @@ class HomeController extends GetxController {
       if (_isDisposed) return;
       if (item.types.isNotEmpty) continue;
 
-      final result = await repository.getPokemonDetail(item.id, name: item.name);
-      
+      final result = await repository.getPokemonDetail(
+        item.id,
+        name: item.name,
+      );
+
       result.fold(
         (failure) => null, // Silent fail for background tasks
         (detail) {
@@ -100,7 +108,9 @@ class HomeController extends GetxController {
           final typeNames = detail.types.map((e) => e.name).toList();
           final itemList = pagingController.itemList;
           if (itemList != null) {
-            final index = itemList.indexWhere((element) => element.name == item.name);
+            final index = itemList.indexWhere(
+              (element) => element.name == item.name,
+            );
             if (index != -1) {
               itemList[index] = item.copyWith(types: typeNames);
               // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
@@ -126,18 +136,30 @@ class HomeController extends GetxController {
       if (query.isNotEmpty) {
         final result = await repository.getAllPokemon(limit: 100, offset: 0);
         result.fold(
-          (failure) => pagingController.refresh(), // Trigger refresh to show error
+          (failure) {
+            // Si falla la búsqueda (ej. offline y sin caché),
+            // limpiamos la lista actual para mostrar el estado de error/vacío del PagingController
+            isSearching.value = false;
+            pagingController.error = failure.message.tr;
+          },
           (allResults) {
-            final newResults = allResults.where((p) => 
-              p.name.toLowerCase().contains(query.toLowerCase())
-            ).toList();
+            final newResults = allResults
+                .where(
+                  (p) => p.name.toLowerCase().contains(query.toLowerCase()),
+                )
+                .toList();
 
-            final currentItems = pagingController.itemList ?? [];
-            if (newResults.isEmpty && currentItems.isEmpty) {
-              isSearching.value = false;
-              return; 
+            isSearching.value = false;
+            if (newResults.isEmpty) {
+              pagingController.itemList = [];
+              pagingController.error = TranslationKeys.noResults.tr;
+            } else {
+              pagingController.value = PagingState(
+                itemList: newResults,
+                nextPageKey: null,
+                error: null,
+              );
             }
-            pagingController.refresh();
           },
         );
       } else {

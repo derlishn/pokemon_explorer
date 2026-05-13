@@ -29,7 +29,8 @@ class ErrorState extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                message == TranslationKeys.noCacheAvailable.tr 
+                message == TranslationKeys.noCacheAvailable.tr || 
+                message == TranslationKeys.noResults.tr
                     ? Icons.cloud_off_rounded 
                     : icon,
                 size: 64,
@@ -38,7 +39,8 @@ class ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              message == TranslationKeys.noCacheAvailable.tr 
+              message == TranslationKeys.noCacheAvailable.tr ||
+              message == TranslationKeys.noResults.tr
                   ? TranslationKeys.noConnectionTitle.tr 
                   : TranslationKeys.errorUnknown.tr,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(

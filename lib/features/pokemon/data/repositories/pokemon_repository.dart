@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:pokemon_explorer/core/constants/error_constants.dart';
 import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/core/error/failure.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
@@ -38,15 +37,20 @@ class PokemonRepository {
       if (response.body != null && response.body is Map) {
         final List? results = response.body[ApiKeys.results];
         if (results != null) {
-          final list = results.map((e) => PokemonListItemModel.fromJson(Map<String, dynamic>.from(e))).toList();
-          
+          final list = results
+              .map(
+                (e) =>
+                    PokemonListItemModel.fromJson(Map<String, dynamic>.from(e)),
+              )
+              .toList();
+
           if (SettingsService.to.useCache) {
             await storageService.write(listCacheKey, response.body);
           }
           return Right(list);
         }
       }
-      
+
       throw Exception('Invalid Response Structure');
     } catch (e) {
       // FALLBACK UNIVERSAL: Si algo falla (red, servidor, parseo), forzamos caché
@@ -57,9 +61,13 @@ class PokemonRepository {
           final List? results = cachedData[ApiKeys.results];
           if (results != null) {
             try {
-              final list = results.map((e) => 
-                PokemonListItemModel.fromJson(Map<String, dynamic>.from(e))
-              ).toList();
+              final list = results
+                  .map(
+                    (e) => PokemonListItemModel.fromJson(
+                      Map<String, dynamic>.from(e),
+                    ),
+                  )
+                  .toList();
               return Right(list);
             } catch (_) {}
           }
@@ -69,16 +77,19 @@ class PokemonRepository {
         if (offset == 0) {
           final allKeys = storageService.getKeys();
           final List<PokemonListItemModel> reconstructedList = [];
-          
+
           for (var key in allKeys) {
             final k = key.toString();
             // Evitamos las llaves de listas y detalles completos, buscamos solo los items básicos
-            if (k.startsWith(AppConstants.pokemonCachePrefix) && !k.contains('list_page_')) {
+            if (k.startsWith(AppConstants.pokemonCachePrefix) &&
+                !k.contains('list_page_')) {
               final itemData = storageService.read(k);
               if (itemData != null && itemData is Map) {
                 try {
                   reconstructedList.add(
-                    PokemonListItemModel.fromJson(Map<String, dynamic>.from(itemData))
+                    PokemonListItemModel.fromJson(
+                      Map<String, dynamic>.from(itemData),
+                    ),
                   );
                 } catch (_) {}
               }
@@ -90,12 +101,10 @@ class PokemonRepository {
           }
         }
       }
-      
+
       // Si no hay absolutamente nada en caché, devolvemos el error correspondiente
-      if (e is NoInternetException) {
-        return const Left(ConnectionFailure(TranslationKeys.noCacheAvailable));
-      }
-      return const Left(ServerFailure(ErrorConstants.errorServer));
+      // Si llegamos aquí es porque falló la red Y no había nada útil en local
+      return const Left(ConnectionFailure(TranslationKeys.noCacheAvailable));
     }
   }
 
