@@ -30,7 +30,7 @@ class LoginController extends GetxController {
     final pass = passwordController.text.trim();
 
     if (user == 'flutter' && pass == 'flutter') {
-      AuthService.to.login(user);
+      AuthService.to.login(user, pass);
     } else {
       AppSnackbar.error(
         title: 'login'.tr,

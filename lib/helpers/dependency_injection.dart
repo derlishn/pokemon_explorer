@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
+import 'package:pokemon_explorer/data/repository/auth_repository.dart';
 import 'package:pokemon_explorer/data/network/api_client.dart';
+import 'package:pokemon_explorer/data/services/storage_service.dart';
+import 'package:pokemon_explorer/data/services/secure_storage_service.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';
@@ -8,14 +11,31 @@ import 'package:pokemon_explorer/services/favorites_service.dart';
 class DependencyInjection {
   static Future<void> init() async {
     // Services
+    final storage = StorageService();
+    final secureStorage = SecureStorageService();
+    
     await Get.putAsync(() => SettingsService().init());
-    await Get.putAsync(() => AuthService().init());
+    Get.put(storage);
+    Get.put(secureStorage);
+    
+    // Repositories
+    final authRepo = AuthRepository(secureStorage: secureStorage);
+    Get.put(authRepo);
+    
+    await Get.putAsync(() => AuthService(
+      authRepository: authRepo,
+      storageService: storage,
+    ).init());
+    
     await Get.putAsync(() => FavoritesService().init());
 
     // Network
     Get.put(ApiClient());
 
     // Repositories
-    Get.lazyPut(() => PokemonRepository(apiClient: Get.find()));
+    Get.lazyPut(() => PokemonRepository(
+      apiClient: Get.find(),
+      storageService: storage,
+    ));
   }
 }
