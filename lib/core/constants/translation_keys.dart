@@ -23,7 +23,14 @@ class TranslationKeys {
   static const String disable = 'disable';
   static const String delete = 'delete';
   static const String theme = 'theme';
+  static const String darkMode = 'dark_mode';
+  static const String accentColor = 'accent_color';
   static const String language = 'language';
+  static const String layout = 'layout';
+  static const String gridColumns = 'grid_columns';
+  static const String auto = 'auto';
+  static const String cacheClearedTitle = 'cache_cleared_title';
+  static const String cacheClearedMsg = 'cache_cleared_msg';
   static const String height = 'height';
   static const String weight = 'weight';
   static const String baseStats = 'base_stats';
@@ -37,7 +44,11 @@ class TranslationKeys {
   static const String pokemonNotFound = 'pokemon_not_found';
   static const String retry = 'retry';
   static const String about = 'about';
+  static const String aboutApp = 'about_app';
   static const String entrenadorPokemon = 'entrenador_pokemon';
+  static const String loginSubtitle = 'login_subtitle';
+  static const String noFavorites = 'no_favorites';
+  static const String choosePartner = 'choose_partner';
   static const String aboutAppDesc = 'about_app_desc';
   static const String errorTimeout = 'error_timeout';
   static const String checkInternetConnection = 'check_internet_connection';

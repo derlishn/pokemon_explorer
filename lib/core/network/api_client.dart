@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:pokemon_explorer/core/constants/api_config.dart';
+import 'package:pokemon_explorer/core/config/api_config.dart';
 import 'package:pokemon_explorer/core/constants/error_constants.dart';
 import 'package:pokemon_explorer/core/network/network_exceptions.dart';
 
@@ -13,10 +13,11 @@ class ApiClient extends GetConnect {
   void onInit() {
     baseUrl = ApiConfig.baseUrl;
     timeout = const Duration(seconds: ApiConfig.receiveTimeout);
-    
+
     // Request interceptor: check connectivity before each call
     httpClient.addRequestModifier<dynamic>((request) async {
-      final List<ConnectivityResult> connectivityResult = await Connectivity().checkConnectivity();
+      final List<ConnectivityResult> connectivityResult = await Connectivity()
+          .checkConnectivity();
       if (connectivityResult.contains(ConnectivityResult.none)) {
         throw NoInternetException(ErrorConstants.errorNoInternet);
       }
@@ -37,14 +38,17 @@ class ApiClient extends GetConnect {
       if (response.status.connectionError) {
         throw NoInternetException(ErrorConstants.errorNetwork);
       }
-      
+
       final int statusCode = response.statusCode ?? 500;
       switch (statusCode) {
         case 400:
           throw BadRequestException(ErrorConstants.errorBadRequest, statusCode);
         case 401:
         case 403:
-          throw UnauthorizedException(ErrorConstants.errorUnauthorized, statusCode);
+          throw UnauthorizedException(
+            ErrorConstants.errorUnauthorized,
+            statusCode,
+          );
         case 404:
           throw NotFoundException(ErrorConstants.errorNotFound, statusCode);
         case 408:
@@ -60,9 +64,10 @@ class ApiClient extends GetConnect {
   /// Safe request wrapper with enforced timeouts
   Future<Response> safeGet(String url, {Map<String, dynamic>? query}) async {
     try {
-      final Response response = await get(url, query: query).timeout(
-        const Duration(seconds: ApiConfig.connectTimeout),
-      );
+      final Response response = await get(
+        url,
+        query: query,
+      ).timeout(const Duration(seconds: ApiConfig.connectTimeout));
       return response;
     } on TimeoutException {
       throw ApiTimeoutException(ErrorConstants.errorTimeout);

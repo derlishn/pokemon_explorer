@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:pokemon_explorer/core/error/failure.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
-import 'package:pokemon_explorer/core/constants/api_config.dart';
+import 'package:pokemon_explorer/core/config/api_config.dart';
 import 'package:pokemon_explorer/core/constants/api_endpoints.dart';
 import 'package:pokemon_explorer/core/constants/api_keys.dart';
 import 'package:pokemon_explorer/core/constants/constants.dart';
@@ -15,10 +15,7 @@ class PokemonRepository {
   final ApiClient apiClient;
   final StorageService storageService;
 
-  PokemonRepository({
-    required this.apiClient,
-    required this.storageService,
-  });
+  PokemonRepository({required this.apiClient, required this.storageService});
 
   /// Fetches the base Pokemon list from remote source
   Future<Either<Failure, List<PokemonListItemModel>>> getAllPokemon({
@@ -35,7 +32,9 @@ class PokemonRepository {
       );
 
       final List results = response.body[ApiKeys.results];
-      final list = results.map((e) => PokemonListItemModel.fromJson(e)).toList();
+      final list = results
+          .map((e) => PokemonListItemModel.fromJson(e))
+          .toList();
       return Right(list);
     } on NoInternetException catch (e) {
       return Left(ConnectionFailure(e.errorCode));

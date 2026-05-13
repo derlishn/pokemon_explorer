@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 
 class AboutAppCard extends StatelessWidget {
   const AboutAppCard({super.key});
@@ -19,13 +20,13 @@ class AboutAppCard extends StatelessWidget {
               Icon(Icons.code, size: 40, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 12),
               Text(
-                'about_app_desc'.tr,
+                TranslationKeys.aboutAppDesc.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(height: 1.5),
               ),
               const SizedBox(height: 12),
               Text(
-                'dev_signature'.tr,
+                TranslationKeys.devSignature.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),

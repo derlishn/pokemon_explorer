@@ -50,7 +50,7 @@ class _LoginContent extends GetView<LoginController> {
         children: [
           LoginHeader(
             title: TranslationKeys.appName.tr,
-            subtitle: 'Inicia sesión para continuar tu aventura',
+            subtitle: TranslationKeys.loginSubtitle.tr,
           ),
           const SizedBox(height: 60),
 
