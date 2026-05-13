@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
+import 'package:pokemon_explorer/helpers/api_constants.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 
 class PokemonRepository {
@@ -13,7 +14,7 @@ class PokemonRepository {
   Future<List<PokemonListItemModel>> getAllPokemon({int limit = 20, int offset = 0}) async {
     try {
       final response = await _connect.get(
-        'https://pokeapi.co/api/v2/pokemon',
+        '${ApiConstants.baseUrl}/pokemon',
         query: {'limit': limit.toString(), 'offset': offset.toString()},
       ).timeout(const Duration(seconds: 15));
 
@@ -21,7 +22,7 @@ class PokemonRepository {
         return _handleError(response);
       }
 
-      final List results = response.body['results'];
+      final List results = response.body[ApiConstants.keyResults];
       return results.map((e) => PokemonListItemModel.fromJson(e)).toList();
     } catch (e) {
       throw Exception('error_network'.tr);
@@ -39,7 +40,7 @@ class PokemonRepository {
     }
 
     try {
-      final response = await _connect.get('https://pokeapi.co/api/v2/pokemon/$id')
+      final response = await _connect.get('${ApiConstants.baseUrl}/pokemon/$id')
           .timeout(const Duration(seconds: 10));
 
       if (response.status.hasError) {
@@ -52,7 +53,7 @@ class PokemonRepository {
       if (SettingsService.to.useCache && name != null) {
         final item = PokemonListItemModel(
           name: name,
-          url: 'https://pokeapi.co/api/v2/pokemon/$id/',
+          url: '${ApiConstants.baseUrl}/pokemon/$id/',
           types: detail.types.map((t) => t.name).toList(),
         );
         await _cache.write(_cachePrefix + name, item.toJson());

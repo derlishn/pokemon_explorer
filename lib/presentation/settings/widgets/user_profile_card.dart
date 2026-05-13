@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
+import 'package:pokemon_explorer/helpers/api_constants.dart';
 
 class UserProfileCard extends StatefulWidget {
   final String userName;
@@ -111,7 +112,8 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
     try {
       final segments = staticUrl.split('/');
       final idStr = segments.last.split('.').first;
-      return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/$idStr.gif';
+      final id = int.parse(idStr);
+      return ApiConstants.animatedGifUrl(id);
     } catch (e) {
       return staticUrl;
     }

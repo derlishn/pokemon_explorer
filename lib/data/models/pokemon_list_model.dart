@@ -1,3 +1,5 @@
+import 'package:pokemon_explorer/helpers/api_constants.dart';
+
 class PokemonListItemModel {
   final String name;
   final String url;
@@ -11,17 +13,19 @@ class PokemonListItemModel {
 
   factory PokemonListItemModel.fromJson(Map<String, dynamic> json) {
     return PokemonListItemModel(
-      name: json['name'],
-      url: json['url'],
-      types: json['types'] != null ? List<String>.from(json['types']) : [],
+      name: json[ApiConstants.keyName],
+      url: json[ApiConstants.keyUrl],
+      types: json[ApiConstants.keyTypes] != null 
+          ? List<String>.from(json[ApiConstants.keyTypes]) 
+          : [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
-      'url': url,
-      'types': types,
+      ApiConstants.keyName: name,
+      ApiConstants.keyUrl: url,
+      ApiConstants.keyTypes: types,
     };
   }
 
@@ -30,8 +34,7 @@ class PokemonListItemModel {
     return int.parse(parts[parts.length - 2]);
   }
 
-  String get imageUrl =>
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
+  String get imageUrl => ApiConstants.pokemonImageUrl(id);
 
   PokemonListItemModel copyWith({List<String>? types}) {
     return PokemonListItemModel(
