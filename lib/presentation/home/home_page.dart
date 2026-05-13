@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+import 'package:pokemon_explorer/presentation/widgets/empty_state.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/presentation/widgets/pokemon_card.dart';
 import 'home_controller.dart';
@@ -15,10 +16,7 @@ class HomePage extends GetView<HomeController> {
     return Scaffold(
       body: CustomScrollView(
         physics: const ClampingScrollPhysics(),
-        slivers: [
-          _buildAppBar(context),
-          _buildBody(context),
-        ],
+        slivers: [_buildAppBar(context), _buildBody(context)],
       ),
     );
   }
@@ -70,14 +68,14 @@ class HomePage extends GetView<HomeController> {
     return Obx(() {
       final width = MediaQuery.of(context).size.width;
       final manualColumns = SettingsService.to.gridColumns;
-      final int crossAxisCount = manualColumns > 0 
-          ? manualColumns 
+      final int crossAxisCount = manualColumns > 0
+          ? manualColumns
           : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
 
       if (controller.isSearching.value) {
         return _buildSearchResults(context, crossAxisCount);
       }
-      
+
       return SliverPadding(
         padding: const EdgeInsets.all(16),
         sliver: PagedSliverGrid<int, PokemonListItemModel>(
@@ -90,8 +88,10 @@ class HomePage extends GetView<HomeController> {
             childAspectRatio: 0.85,
           ),
           builderDelegate: PagedChildBuilderDelegate<PokemonListItemModel>(
-            itemBuilder: (context, item, index) => _buildAnimatedItem(item, index, crossAxisCount),
-            firstPageProgressIndicatorBuilder: (_) => _buildSkeletonLoading(context, crossAxisCount),
+            itemBuilder: (context, item, index) =>
+                _buildAnimatedItem(item, index, crossAxisCount),
+            firstPageProgressIndicatorBuilder: (_) =>
+                _buildSkeletonLoading(context, crossAxisCount),
             newPageProgressIndicatorBuilder: (_) => const Center(
               child: Padding(
                 padding: EdgeInsets.all(32.0),
@@ -105,7 +105,11 @@ class HomePage extends GetView<HomeController> {
     });
   }
 
-  Widget _buildAnimatedItem(PokemonListItemModel item, int index, int crossAxisCount) {
+  Widget _buildAnimatedItem(
+    PokemonListItemModel item,
+    int index,
+    int crossAxisCount,
+  ) {
     return AnimationConfiguration.staggeredGrid(
       position: index,
       duration: const Duration(milliseconds: 600),
@@ -155,7 +159,8 @@ class HomePage extends GetView<HomeController> {
           childAspectRatio: 0.85,
         ),
         delegate: SliverChildBuilderDelegate(
-          (context, index) => _buildAnimatedItem(results[index], index, crossAxisCount),
+          (context, index) =>
+              _buildAnimatedItem(results[index], index, crossAxisCount),
           childCount: results.length,
         ),
       ),
@@ -165,19 +170,25 @@ class HomePage extends GetView<HomeController> {
   Widget _buildSkeletonLoading(BuildContext context, int crossAxisCount) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(4, (rowIndex) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: Row(
-          children: List.generate(crossAxisCount, (colIndex) => Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: colIndex == crossAxisCount - 1 ? 0 : 16,
+      children: List.generate(
+        4,
+        (rowIndex) => Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            children: List.generate(
+              crossAxisCount,
+              (colIndex) => Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: colIndex == crossAxisCount - 1 ? 0 : 16,
+                  ),
+                  child: _buildSkeletonCard(context),
+                ),
               ),
-              child: _buildSkeletonCard(context),
             ),
-          )),
+          ),
         ),
-      )),
+      ),
     );
   }
 
@@ -195,15 +206,6 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.search_off, size: 64, color: Colors.grey),
-          const SizedBox(height: 16),
-          Text('no_results'.tr),
-        ],
-      ),
-    );
+    return const EmptyState(message: 'no_results', icon: Icons.search_off);
   }
 }

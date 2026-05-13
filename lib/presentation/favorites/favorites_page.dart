@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:pokemon_explorer/presentation/widgets/empty_state.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';
 import 'package:pokemon_explorer/presentation/widgets/pokemon_card.dart';
 
@@ -11,25 +12,19 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('favorites'.tr, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          'favorites'.tr,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: Obx(() {
         final results = FavoritesService.to.favorites.toList();
-        
+
         if (results.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.favorite_border, size: 80, color: Colors.grey),
-                const SizedBox(height: 20),
-                Text(
-                  'No tienes favoritos todavía'.tr,
-                  style: const TextStyle(fontSize: 18, color: Colors.grey),
-                ),
-              ],
-            ),
+          return const EmptyState(
+            message: 'No tienes favoritos aún',
+            icon: Icons.favorite_border,
           );
         }
 
