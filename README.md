@@ -29,11 +29,18 @@ Pokémon Explorer es una aplicación móvil y de escritorio desarrollada con Flu
 
 ## Arquitectura del Proyecto
 
-El código se organiza de manera modular siguiendo una estructura orientada a características (*Feature-driven*):
+El proyecto utiliza una arquitectura de **Clean Architecture Modular**, diseñada para ser escalable, testeable y fácil de mantener. Esta estructura es una **extensión directa** de la estructura base solicitada, evolucionando hacia un modelo orientado a características (*Feature-driven*).
 
-- **Core**: Contiene la infraestructura base, configuración de red, temas globales y utilidades compartidas.
-- **Features**: Cada funcionalidad (Auth, Pokemon, Favorites, Settings) está encapsulada en su propio módulo, separando la lógica de datos de la presentación.
-- **Services**: Servicios globales que gestionan el estado persistente de la aplicación (Autenticación, Favoritos, Preferencias).
+### Justificación Arquitectónica
+Se decidió implementar este modelo para garantizar una separación de responsabilidades estricta:
+- **Separación por Funciones**: Cada módulo (Auth, Pokemon, Favorites) es independiente, lo que permite trabajar en una característica sin afectar a las demás.
+- **Mapeo de Estructura**: Se mantiene la lógica solicitada pero organizada de forma robusta. `lib/core` agrupa la infraestructura global, mientras que cada *feature* encapsula sus propios niveles de datos y presentación.
+- **Desacoplamiento**: El uso de esta arquitectura permite que la lógica de negocio no dependa de la interfaz de usuario ni de los detalles de implementación de la API.
+
+### Organización de Carpetas
+- **Core**: Infraestructura base, configuración de red, temas globales y utilidades.
+- **Features**: Cada funcionalidad encapsulada (Data, Presentation, Widgets).
+- **Services**: Servicios persistentes (Autenticación, Preferencias, Conectividad).
 - **Routes**: Definición centralizada de la navegación y protección de rutas.
 
 ## Características Técnicas
