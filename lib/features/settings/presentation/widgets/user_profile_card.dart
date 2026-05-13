@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/core/utils/url_helper.dart';
+import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 
 class UserProfileCard extends StatefulWidget {
   final String userName;
@@ -112,7 +113,7 @@ class _UserProfileCardState extends State<UserProfileCard>
         widget.userName,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
-      subtitle: Text('entrenador_pokemon'.tr),
+      subtitle: Text(TranslationKeys.entrenadorPokemon.tr),
       trailing: IconButton(
         icon: const Icon(Icons.logout, color: Colors.red),
         onPressed: widget.onLogout,
