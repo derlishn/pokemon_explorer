@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/data/repository/auth_repository.dart';
-import 'package:pokemon_explorer/data/services/storage_service.dart';
-import 'package:pokemon_explorer/helpers/constants.dart';
+import 'package:pokemon_explorer/core/storage/storage_service.dart';
+import 'package:pokemon_explorer/core/constants/constants.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
 
 /// Service for managing global authentication state

@@ -1,4 +1,5 @@
-import 'package:pokemon_explorer/helpers/api_constants.dart';
+import 'package:pokemon_explorer/core/constants/api_keys.dart';
+import 'package:pokemon_explorer/core/utils/url_helper.dart';
 
 /// Represents a basic Pokemon item used in lists and pagination
 class PokemonListItemModel {
@@ -15,10 +16,10 @@ class PokemonListItemModel {
   /// Factory constructor for creating a model from API JSON response
   factory PokemonListItemModel.fromJson(Map<String, dynamic> json) {
     return PokemonListItemModel(
-      name: json[ApiConstants.keyName],
-      url: json[ApiConstants.keyUrl],
-      types: json[ApiConstants.keyTypes] != null 
-          ? List<String>.from(json[ApiConstants.keyTypes]) 
+      name: json[ApiKeys.name],
+      url: json[ApiKeys.url],
+      types: json[ApiKeys.types] != null 
+          ? List<String>.from(json[ApiKeys.types]) 
           : [],
     );
   }
@@ -26,20 +27,21 @@ class PokemonListItemModel {
   /// Converts the model back to JSON for local persistence
   Map<String, dynamic> toJson() {
     return {
-      ApiConstants.keyName: name,
-      ApiConstants.keyUrl: url,
-      ApiConstants.keyTypes: types,
+      ApiKeys.name: name,
+      ApiKeys.url: url,
+      ApiKeys.types: types,
     };
   }
 
   /// Extracts the Pokemon ID from the detail URL
   int get id {
     final parts = url.split('/');
+    // The URL ends with /id/, so the ID is at length - 2
     return int.parse(parts[parts.length - 2]);
   }
 
   /// Get the official artwork URL based on ID
-  String get imageUrl => ApiConstants.pokemonImageUrl(id);
+  String get imageUrl => UrlHelper.getOfficialArtwork(id);
 
   PokemonListItemModel copyWith({List<String>? types}) {
     return PokemonListItemModel(

@@ -31,42 +31,50 @@ class HomeController extends GetxController {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    try {
-      List<PokemonListItemModel> newItems;
-      
-      if (searchQuery.isNotEmpty) {
-        // Use the pre-filtered results from _onSearchChanged if available
-        if (_currentSearchResults.isNotEmpty || pageKey == 0) {
-          final allResults = await repository.getAllPokemon(limit: 100, offset: 0);
-          newItems = allResults.where((p) => 
-            p.name.toLowerCase().contains(searchQuery.value.toLowerCase())
-          ).toList();
-        } else {
-          newItems = [];
-        }
-        
-        pagingController.appendLastPage(newItems);
-      } else {
-        newItems = await repository.getAllPokemon(
-          limit: _pageSize,
-          offset: pageKey,
+    if (searchQuery.isNotEmpty) {
+      if (_currentSearchResults.isNotEmpty || pageKey == 0) {
+        final result = await repository.getAllPokemon(limit: 100, offset: 0);
+        result.fold(
+          (failure) {
+            isSearching.value = false;
+            if (!_isDisposed) pagingController.error = failure.message.tr;
+          },
+          (allResults) {
+            final newItems = allResults.where((p) => 
+              p.name.toLowerCase().contains(searchQuery.value.toLowerCase())
+            ).toList();
+            pagingController.appendLastPage(newItems);
+            _fetchTypesInBackground(newItems);
+            isSearching.value = false;
+          },
         );
-
-        final isLastPage = newItems.length < _pageSize;
-        if (isLastPage) {
-          pagingController.appendLastPage(newItems);
-        } else {
-          final nextPageKey = pageKey + newItems.length;
-          pagingController.appendPage(newItems, nextPageKey);
-        }
+      } else {
+        pagingController.appendLastPage([]);
+        isSearching.value = false;
       }
+    } else {
+      final result = await repository.getAllPokemon(
+        limit: _pageSize,
+        offset: pageKey,
+      );
 
-      _fetchTypesInBackground(newItems);
-      isSearching.value = false;
-      
-    } catch (error) {
-      isSearching.value = false;
-      if (!_isDisposed) pagingController.error = error;
+      result.fold(
+        (failure) {
+          isSearching.value = false;
+          if (!_isDisposed) pagingController.error = failure.message.tr;
+        },
+        (newItems) {
+          final isLastPage = newItems.length < _pageSize;
+          if (isLastPage) {
+            pagingController.appendLastPage(newItems);
+          } else {
+            final nextPageKey = pageKey + newItems.length;
+            pagingController.appendPage(newItems, nextPageKey);
+          }
+          _fetchTypesInBackground(newItems);
+          isSearching.value = false;
+        },
+      );
     }
   }
 
@@ -75,24 +83,24 @@ class HomeController extends GetxController {
       if (_isDisposed) return;
       if (item.types.isNotEmpty) continue;
 
-      try {
-        final detail = await repository.getPokemonDetail(item.id, name: item.name);
-        final typeNames = detail.types.map((e) => e.name).toList();
-        
-        if (_isDisposed) return;
-
-        final itemList = pagingController.itemList;
-        if (itemList != null) {
-          final index = itemList.indexWhere((element) => element.name == item.name);
-          if (index != -1) {
-            itemList[index] = item.copyWith(types: typeNames);
-            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-            pagingController.notifyListeners();
+      final result = await repository.getPokemonDetail(item.id, name: item.name);
+      
+      result.fold(
+        (failure) => null, // Silent fail for background tasks
+        (detail) {
+          if (_isDisposed) return;
+          final typeNames = detail.types.map((e) => e.name).toList();
+          final itemList = pagingController.itemList;
+          if (itemList != null) {
+            final index = itemList.indexWhere((element) => element.name == item.name);
+            if (index != -1) {
+              itemList[index] = item.copyWith(types: typeNames);
+              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+              pagingController.notifyListeners();
+            }
           }
-        }
-      } catch (e) {
-        // Silent fail
-      }
+        },
+      );
     }
   }
 
@@ -107,23 +115,26 @@ class HomeController extends GetxController {
     _debounce = Timer(const Duration(milliseconds: 800), () async {
       if (_isDisposed) return;
 
-      // PRO LOGIC: Perform the search check BEFORE refreshing the UI
       if (query.isNotEmpty) {
-        final allResults = await repository.getAllPokemon(limit: 100, offset: 0);
-        final newResults = allResults.where((p) => 
-          p.name.toLowerCase().contains(query.toLowerCase())
-        ).toList();
+        final result = await repository.getAllPokemon(limit: 100, offset: 0);
+        result.fold(
+          (failure) => pagingController.refresh(), // Trigger refresh to show error
+          (allResults) {
+            final newResults = allResults.where((p) => 
+              p.name.toLowerCase().contains(query.toLowerCase())
+            ).toList();
 
-        // If the new results are empty AND the current UI is already showing empty,
-        // we DON'T refresh, thus preventing the flicker.
-        final currentItems = pagingController.itemList ?? [];
-        if (newResults.isEmpty && currentItems.isEmpty) {
-          isSearching.value = false;
-          return; 
-        }
+            final currentItems = pagingController.itemList ?? [];
+            if (newResults.isEmpty && currentItems.isEmpty) {
+              isSearching.value = false;
+              return; 
+            }
+            pagingController.refresh();
+          },
+        );
+      } else {
+        pagingController.refresh();
       }
-
-      pagingController.refresh();
     });
   }
 

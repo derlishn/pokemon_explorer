@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
 import 'package:pokemon_explorer/presentation/widgets/stat_bar.dart';
-import 'package:pokemon_explorer/helpers/app_colors.dart';
+import 'package:pokemon_explorer/core/theme/app_colors.dart';
 
 class StatsTab extends StatelessWidget {
   final PokemonDetailModel pokemon;

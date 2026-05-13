@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/data/repository/pokemon_repository.dart';
 import 'package:pokemon_explorer/data/repository/auth_repository.dart';
-import 'package:pokemon_explorer/data/network/api_client.dart';
-import 'package:pokemon_explorer/data/services/storage_service.dart';
-import 'package:pokemon_explorer/data/services/secure_storage_service.dart';
+import 'package:pokemon_explorer/core/network/api_client.dart';
+import 'package:pokemon_explorer/core/storage/storage_service.dart';
+import 'package:pokemon_explorer/core/storage/secure_storage_service.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';

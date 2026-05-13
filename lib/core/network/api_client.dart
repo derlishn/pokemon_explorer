@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:pokemon_explorer/helpers/api_constants.dart';
-import 'package:pokemon_explorer/helpers/error_constants.dart';
-import 'package:pokemon_explorer/data/network/network_exceptions.dart';
+import 'package:pokemon_explorer/core/constants/api_config.dart';
+import 'package:pokemon_explorer/core/constants/error_constants.dart';
+import 'package:pokemon_explorer/core/network/network_exceptions.dart';
 
 /// Base network client with global interceptors and error handling
 class ApiClient extends GetConnect {
@@ -11,8 +11,8 @@ class ApiClient extends GetConnect {
 
   @override
   void onInit() {
-    baseUrl = ApiConstants.baseUrl;
-    timeout = const Duration(seconds: ApiConstants.receiveTimeout);
+    baseUrl = ApiConfig.baseUrl;
+    timeout = const Duration(seconds: ApiConfig.receiveTimeout);
     
     // Request interceptor: check connectivity before each call
     httpClient.addRequestModifier<dynamic>((request) async {
@@ -61,7 +61,7 @@ class ApiClient extends GetConnect {
   Future<Response> safeGet(String url, {Map<String, dynamic>? query}) async {
     try {
       final Response response = await get(url, query: query).timeout(
-        const Duration(seconds: ApiConstants.connectTimeout),
+        const Duration(seconds: ApiConfig.connectTimeout),
       );
       return response;
     } on TimeoutException {

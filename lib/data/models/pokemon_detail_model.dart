@@ -1,5 +1,6 @@
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
-import 'package:pokemon_explorer/helpers/api_constants.dart';
+import 'package:pokemon_explorer/core/constants/api_keys.dart';
+import 'package:pokemon_explorer/core/utils/url_helper.dart';
 
 /// Represents the full data of a Pokemon including stats and abilities
 class PokemonDetailModel {
@@ -26,18 +27,18 @@ class PokemonDetailModel {
   /// Factory constructor for detailed data from API
   factory PokemonDetailModel.fromJson(Map<String, dynamic> json) {
     return PokemonDetailModel(
-      id: json[ApiConstants.keyId],
-      name: json[ApiConstants.keyName],
-      height: json[ApiConstants.keyHeight],
-      weight: json[ApiConstants.keyWeight],
-      baseExperience: json[ApiConstants.keyBaseExperience] ?? 0,
-      types: (json[ApiConstants.keyTypes] as List)
+      id: json[ApiKeys.id],
+      name: json[ApiKeys.name],
+      height: json[ApiKeys.height],
+      weight: json[ApiKeys.weight],
+      baseExperience: json[ApiKeys.baseExperience] ?? 0,
+      types: (json[ApiKeys.types] as List)
           .map((i) => PokemonTypeModel.fromJson(i))
           .toList(),
-      stats: (json[ApiConstants.keyStats] as List)
+      stats: (json[ApiKeys.stats] as List)
           .map((i) => PokemonStatModel.fromJson(i))
           .toList(),
-      abilities: (json[ApiConstants.keyAbilities] as List)
+      abilities: (json[ApiKeys.abilities] as List)
           .map((i) => PokemonAbilityModel.fromJson(i))
           .toList(),
     );
@@ -58,7 +59,7 @@ class PokemonDetailModel {
   }
 
   String get formattedId => '#${id.toString().padLeft(3, '0')}';
-  String get imageUrl => ApiConstants.pokemonImageUrl(id);
+  String get imageUrl => UrlHelper.getOfficialArtwork(id);
 }
 
 /// Simplified type model for nested JSON parsing
@@ -69,7 +70,7 @@ class PokemonTypeModel {
 
   factory PokemonTypeModel.fromJson(Map<String, dynamic> json) {
     return PokemonTypeModel(
-      name: json[ApiConstants.keyType][ApiConstants.keyName],
+      name: json[ApiKeys.type][ApiKeys.name],
     );
   }
 }
@@ -83,8 +84,8 @@ class PokemonStatModel {
 
   factory PokemonStatModel.fromJson(Map<String, dynamic> json) {
     return PokemonStatModel(
-      name: json[ApiConstants.keyStat][ApiConstants.keyName],
-      value: json[ApiConstants.keyBaseStat],
+      name: json[ApiKeys.stat][ApiKeys.name],
+      value: json[ApiKeys.baseStat],
     );
   }
 }
@@ -97,7 +98,7 @@ class PokemonAbilityModel {
 
   factory PokemonAbilityModel.fromJson(Map<String, dynamic> json) {
     return PokemonAbilityModel(
-      name: json[ApiConstants.keyAbility][ApiConstants.keyName],
+      name: json[ApiKeys.ability][ApiKeys.name],
     );
   }
 }

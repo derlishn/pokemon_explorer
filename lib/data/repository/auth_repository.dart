@@ -1,5 +1,5 @@
-import 'package:pokemon_explorer/data/services/secure_storage_service.dart';
-import 'package:pokemon_explorer/helpers/constants.dart';
+import 'package:pokemon_explorer/core/storage/secure_storage_service.dart';
+import 'package:pokemon_explorer/core/constants/constants.dart';
 
 /// Repository for handling authentication logic and secure credential storage
 class AuthRepository {

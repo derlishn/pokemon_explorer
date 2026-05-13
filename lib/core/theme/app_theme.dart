@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pokemon_explorer/helpers/app_colors.dart';
+import 'package:pokemon_explorer/core/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData get light => _buildTheme(Brightness.light);

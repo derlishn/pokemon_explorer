@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
-import 'package:pokemon_explorer/helpers/api_constants.dart';
+import 'package:pokemon_explorer/core/utils/url_helper.dart';
 
 class UserProfileCard extends StatefulWidget {
   final String userName;
@@ -18,7 +18,8 @@ class UserProfileCard extends StatefulWidget {
   State<UserProfileCard> createState() => _UserProfileCardState();
 }
 
-class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProviderStateMixin {
+class _UserProfileCardState extends State<UserProfileCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -29,7 +30,7 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -52,34 +53,45 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
             // Animated Pulse Aura
             ScaleTransition(
               scale: _pulseAnimation,
-              child: Obx(() => Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: SettingsService.to.accentColor.withValues(alpha: 0.4),
-                      blurRadius: 15,
-                      spreadRadius: 2,
-                    ),
-                  ],
+              child: Obx(
+                () => Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: SettingsService.to.accentColor
+                            .withValues(alpha: 0.4),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
                 ),
-              )),
-            ),
-            
-            // The Animated Avatar
-            Obx(() => SizedBox(
-              width: 65,
-              height: 65,
-              child: CachedNetworkImage(
-                imageUrl: _getAnimatedUrl(SettingsService.to.profileAvatar),
-                fit: BoxFit.contain,
-                placeholder: (context, url) => const Center(child: SizedBox(width: 15, height: 15, child: CircularProgressIndicator(strokeWidth: 1))),
-                errorWidget: (context, url, error) => const Icon(Icons.person),
               ),
-            )),
-            
+            ),
+
+            // The Animated Avatar
+            Obx(
+              () => SizedBox(
+                width: 65,
+                height: 65,
+                child: CachedNetworkImage(
+                  imageUrl: _getAnimatedUrl(SettingsService.to.profileAvatar),
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => const Center(
+                    child: SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(strokeWidth: 1),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.person),
+                ),
+              ),
+            ),
+
             // Edit Badge
             Positioned(
               right: 0,
@@ -113,7 +125,7 @@ class _UserProfileCardState extends State<UserProfileCard> with SingleTickerProv
       final segments = staticUrl.split('/');
       final idStr = segments.last.split('.').first;
       final id = int.parse(idStr);
-      return ApiConstants.animatedGifUrl(id);
+      return UrlHelper.getAnimatedGif(id);
     } catch (e) {
       return staticUrl;
     }

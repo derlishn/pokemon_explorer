@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:pokemon_explorer/helpers/dependency_injection.dart';
-import 'package:pokemon_explorer/helpers/translations.dart';
+import 'package:pokemon_explorer/core/di/dependency_injection.dart';
+import 'package:pokemon_explorer/core/translations/translations.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 

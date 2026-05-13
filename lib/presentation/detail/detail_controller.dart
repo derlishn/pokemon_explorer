@@ -19,11 +19,11 @@ class DetailController extends GetxController with StateMixin<PokemonDetailModel
 
   Future<void> _loadDetail() async {
     change(null, status: RxStatus.loading());
-    try {
-      final detail = await _repository.getPokemonDetail(initialData.id);
-      change(detail, status: RxStatus.success());
-    } catch (e) {
-      change(null, status: RxStatus.error(e.toString()));
-    }
+    final result = await _repository.getPokemonDetail(initialData.id);
+    
+    result.fold(
+      (failure) => change(null, status: RxStatus.error(failure.message.tr)),
+      (detail) => change(detail, status: RxStatus.success()),
+    );
   }
 }

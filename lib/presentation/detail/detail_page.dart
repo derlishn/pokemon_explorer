@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
-import 'package:pokemon_explorer/helpers/app_colors.dart';
+import 'package:pokemon_explorer/core/theme/app_colors.dart';
 import 'package:pokemon_explorer/presentation/layouts/adaptive_layout.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';
 import 'package:pokemon_explorer/presentation/widgets/rotating_pokeball.dart';
