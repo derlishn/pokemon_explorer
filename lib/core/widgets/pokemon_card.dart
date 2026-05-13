@@ -3,16 +3,26 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/core/theme/app_colors.dart';
+import 'package:pokemon_explorer/core/utils/hero_tags.dart';
 
 class PokemonCard extends StatelessWidget {
   final PokemonListItemModel pokemon;
   final VoidCallback onTap;
+  final String? heroTag;
 
-  const PokemonCard({super.key, required this.pokemon, required this.onTap});
+  const PokemonCard({
+    super.key, 
+    required this.pokemon, 
+    required this.onTap,
+    this.heroTag,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    
+    // Use utility for fallback to avoid hardcoded prefixes
+    final tag = heroTag ?? HeroTags.getDefaultTag(pokemon.id);
 
     return Card(
       elevation: 0,
@@ -40,7 +50,7 @@ class PokemonCard extends StatelessWidget {
                   ),
                   Center(
                     child: Hero(
-                      tag: 'pokemon_${pokemon.id}',
+                      tag: tag,
                       child: CachedNetworkImage(
                         imageUrl: pokemon.imageUrl,
                         height: 120,

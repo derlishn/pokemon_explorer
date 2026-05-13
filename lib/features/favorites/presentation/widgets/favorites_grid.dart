@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/core/widgets/pokemon_card.dart';
+import 'package:pokemon_explorer/core/utils/hero_tags.dart';
+import 'package:pokemon_explorer/core/constants/constants.dart';
 import 'package:pokemon_explorer/routes/app_pages.dart';
 
 class FavoritesGrid extends StatelessWidget {
@@ -30,6 +32,8 @@ class FavoritesGrid extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final pokemon = items[index];
+              final heroTag = HeroTags.getFavoriteTag(pokemon.id, index);
+              
               return AnimationConfiguration.staggeredGrid(
                 position: index,
                 duration: const Duration(milliseconds: 500),
@@ -38,9 +42,13 @@ class FavoritesGrid extends StatelessWidget {
                   child: FadeInAnimation(
                     child: PokemonCard(
                       pokemon: pokemon,
+                      heroTag: heroTag,
                       onTap: () => Get.toNamed(
                         AppRoutes.detail,
-                        arguments: pokemon,
+                        arguments: {
+                          AppConstants.argPokemon: pokemon,
+                          AppConstants.argHeroTag: heroTag,
+                        },
                       ),
                     ),
                   ),

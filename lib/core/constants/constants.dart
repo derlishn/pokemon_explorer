@@ -28,6 +28,10 @@ class AppConstants {
   static const String fallbackLanguageCode = 'en';
   static const String fallbackCountryCode = 'US';
 
+  // Navigation Arguments
+  static const String argPokemon = 'pokemon_data';
+  static const String argHeroTag = 'hero_tag';
+
   // Exports
   static const translationKeys = TranslationKeys;
 }

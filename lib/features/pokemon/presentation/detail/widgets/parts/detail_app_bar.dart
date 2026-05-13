@@ -8,11 +8,13 @@ import 'package:pokemon_explorer/core/widgets/favorite_button.dart';
 class DetailAppBar extends StatelessWidget {
   final PokemonDetailModel pokemon;
   final Color themeColor;
+  final String heroTag;
 
   const DetailAppBar({
     super.key,
     required this.pokemon,
     required this.themeColor,
+    required this.heroTag,
   });
 
   @override
@@ -31,7 +33,7 @@ class DetailAppBar extends StatelessWidget {
             const RotatingPokeball(size: 300, opacity: 0.2),
             Center(
               child: Hero(
-                tag: 'pokemon_${pokemon.id}',
+                tag: heroTag,
                 child: CachedNetworkImage(
                   imageUrl: pokemon.imageUrl,
                   height: 180,

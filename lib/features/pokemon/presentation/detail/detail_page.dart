@@ -31,9 +31,8 @@ class DetailPage extends GetView<DetailController> {
           );
         },
         onLoading: const Center(child: CircularProgressIndicator()),
-        onError: (error) => Center(
-          child: Text(error ?? TranslationKeys.errorUnknown.tr),
-        ),
+        onError: (error) =>
+            Center(child: Text(error ?? TranslationKeys.errorUnknown.tr)),
       ),
     );
   }
@@ -51,7 +50,11 @@ class _MobileDetail extends GetView<DetailController> {
       length: 3,
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          DetailAppBar(pokemon: pokemon, themeColor: themeColor),
+          DetailAppBar(
+            pokemon: pokemon,
+            themeColor: themeColor,
+            heroTag: controller.heroTag,
+          ),
           _MobileTitleSection(pokemon: pokemon),
           SliverPersistentHeader(
             pinned: true,
@@ -104,7 +107,11 @@ class _DesktopDetail extends GetView<DetailController> {
       children: [
         Expanded(
           flex: 4,
-          child: _DesktopHeroSection(pokemon: pokemon, themeColor: themeColor),
+          child: _DesktopHeroSection(
+            pokemon: pokemon,
+            themeColor: themeColor,
+            heroTag: controller.heroTag,
+          ),
         ),
         Expanded(
           flex: 6,
@@ -136,8 +143,13 @@ class _DesktopDetail extends GetView<DetailController> {
 class _DesktopHeroSection extends StatelessWidget {
   final PokemonDetailModel pokemon;
   final Color themeColor;
+  final String heroTag;
 
-  const _DesktopHeroSection({required this.pokemon, required this.themeColor});
+  const _DesktopHeroSection({
+    required this.pokemon,
+    required this.themeColor,
+    required this.heroTag,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +160,7 @@ class _DesktopHeroSection extends StatelessWidget {
           const RotatingPokeball(size: 600, opacity: 0.1),
           Center(
             child: Hero(
-              tag: 'pokemon_${pokemon.id}',
+              tag: heroTag,
               child: CachedNetworkImage(
                 imageUrl: pokemon.imageUrl,
                 width: 450,
@@ -160,7 +172,11 @@ class _DesktopHeroSection extends StatelessWidget {
             top: 40,
             left: 40,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 30,
+              ),
               onPressed: () => Get.back(),
             ),
           ),
