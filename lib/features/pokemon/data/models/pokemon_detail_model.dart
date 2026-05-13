@@ -3,6 +3,8 @@ import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_type_model
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_stat_model.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_ability_model.dart';
 import 'package:pokemon_explorer/core/constants/api_keys.dart';
+import 'package:pokemon_explorer/core/constants/api_endpoints.dart';
+import 'package:pokemon_explorer/core/config/api_config.dart';
 import 'package:pokemon_explorer/core/utils/url_helper.dart';
 
 /// Represents the full data of a Pokemon including stats and abilities
@@ -58,6 +60,14 @@ class PokemonDetailModel {
       types: item.types.map((t) => PokemonTypeModel(name: t)).toList(),
       stats: [],
       abilities: [],
+    );
+  }
+
+  PokemonListItemModel toListItem() {
+    return PokemonListItemModel(
+      name: name,
+      url: '${ApiConfig.baseUrl}${ApiEndpoints.pokemon}/$id/',
+      types: types.map((t) => t.name).toList(),
     );
   }
 
