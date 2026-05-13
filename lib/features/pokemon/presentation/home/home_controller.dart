@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokemon_explorer/core/constants/translation_keys.dart';
@@ -16,6 +17,7 @@ class HomeController extends GetxController {
 
   final RxString searchQuery = ''.obs;
   final RxBool isSearching = false.obs;
+  final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
   bool _isDisposed = false;
   String _lastQuery = '';
@@ -28,6 +30,10 @@ class HomeController extends GetxController {
     super.onInit();
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
+    });
+
+    searchController.addListener(() {
+      searchQuery.value = searchController.text;
     });
 
     ever(searchQuery, (_) => _onSearchChanged());
@@ -180,13 +186,18 @@ class HomeController extends GetxController {
   }
 
   set search(String query) {
-    searchQuery.value = query;
+    searchController.text = query;
+  }
+
+  void clearSearch() {
+    searchController.clear();
   }
 
   @override
   void onClose() {
     _isDisposed = true;
     _debounce?.cancel();
+    searchController.dispose();
     pagingController.dispose();
     super.onClose();
   }

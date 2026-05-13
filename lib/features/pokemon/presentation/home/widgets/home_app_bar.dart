@@ -7,11 +7,15 @@ import 'package:pokemon_explorer/features/pokemon/presentation/home/widgets/home
 class HomeAppBar extends StatelessWidget {
   final ValueChanged<String> onSearchChanged;
   final RxBool isSearching;
+  final TextEditingController searchController;
+  final VoidCallback onClearSearch;
 
   const HomeAppBar({
     super.key,
     required this.onSearchChanged,
     required this.isSearching,
+    required this.searchController,
+    required this.onClearSearch,
   });
 
   @override
@@ -46,6 +50,8 @@ class HomeAppBar extends StatelessWidget {
               child: HomeSearchBar(
                 onChanged: onSearchChanged,
                 isSearching: isSearching,
+                controller: searchController,
+                onClear: onClearSearch,
               ),
             ),
           ],

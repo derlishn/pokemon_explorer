@@ -31,6 +31,8 @@ class HomePage extends GetView<HomeController> {
                       HomeAppBar(
                         onSearchChanged: (val) => controller.search = val,
                         isSearching: controller.isSearching,
+                        searchController: controller.searchController,
+                        onClearSearch: controller.clearSearch,
                       ),
                       PokemonPagedGrid(
                         pagingController: controller.pagingController,
