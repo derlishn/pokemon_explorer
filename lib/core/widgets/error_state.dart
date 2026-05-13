@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/core/constants/translation_keys.dart';
+import 'package:pokemon_explorer/core/widgets/rotating_pokeball.dart';
 
 class ErrorState extends StatelessWidget {
   final String message;
@@ -22,22 +23,25 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                message == TranslationKeys.noCacheAvailable.tr || 
-                message == TranslationKeys.noResults.tr
-                    ? Icons.cloud_off_rounded 
-                    : icon,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                RotatingPokeball(
+                  size: 140,
+                  opacity: 0.1,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                Icon(
+                  message == TranslationKeys.noCacheAvailable.tr || 
+                  message == TranslationKeys.noResults.tr
+                      ? Icons.cloud_off_rounded 
+                      : icon,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.error.withValues(alpha: 0.8),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Text(
               message == TranslationKeys.noCacheAvailable.tr ||
               message == TranslationKeys.noResults.tr
@@ -56,30 +60,6 @@ class ErrorState extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 54,
-              child: ElevatedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-                label: Text(
-                  TranslationKeys.retry.tr,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
