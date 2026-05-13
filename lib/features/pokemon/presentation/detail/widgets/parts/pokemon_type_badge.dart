@@ -20,7 +20,7 @@ class PokemonTypeBadge extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                backgroundColor: AppColors.getTypeColor(t.name),
+                backgroundColor: AppColors.getTypeColor([t.name]),
                 side: BorderSide.none,
               ))
           .toList(),

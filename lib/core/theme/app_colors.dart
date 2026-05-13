@@ -10,8 +10,11 @@ class AppColors {
   static const Color surfaceDark = Color(0xFF121212);
   
   // Pokemon Types (Utility)
-  static Color getTypeColor(String type) {
-    switch (type.toLowerCase()) {
+  static Color getTypeColor(List<String> types) {
+    if (types.isEmpty) return Colors.blueGrey;
+    
+    final mainType = types.first.toLowerCase();
+    switch (mainType) {
       case 'fire': return Colors.orange;
       case 'water': return Colors.blue;
       case 'grass': return Colors.green;

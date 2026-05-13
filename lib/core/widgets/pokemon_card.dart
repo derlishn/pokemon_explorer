@@ -99,11 +99,11 @@ class PokemonCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.getTypeColor(
-                                type,
+                                [type],
                               ).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: AppColors.getTypeColor(type),
+                                color: AppColors.getTypeColor([type]),
                                 width: 0.5,
                               ),
                             ),
@@ -112,7 +112,7 @@ class PokemonCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 8,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.getTypeColor(type),
+                                color: AppColors.getTypeColor([type]),
                               ),
                             ),
                           ),

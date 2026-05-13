@@ -49,7 +49,7 @@ class _MobileDetail extends GetView<DetailController> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = AppColors.getTypeColor(initialPokemon.types.first);
+    final themeColor = AppColors.getTypeColor(initialPokemon.types);
 
     return DefaultTabController(
       length: 3,
@@ -115,7 +115,7 @@ class _DesktopDetail extends GetView<DetailController> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = AppColors.getTypeColor(initialPokemon.types.first);
+    final themeColor = AppColors.getTypeColor(initialPokemon.types);
 
     return Row(
       children: [

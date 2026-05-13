@@ -10,7 +10,7 @@ class StatsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = AppColors.getTypeColor(pokemon.types.first.name);
+    final themeColor = AppColors.getTypeColor(pokemon.types.map((e) => e.name).toList());
     
     return ListView(
       padding: const EdgeInsets.all(25),
