@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthTextField extends StatelessWidget {
+class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
@@ -15,6 +15,19 @@ class AuthTextField extends StatelessWidget {
   });
 
   @override
+  State<AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<AuthTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.isPassword;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -25,15 +38,29 @@ class AuthTextField extends StatelessWidget {
         border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: TextField(
-        controller: controller,
-        obscureText: isPassword,
+        controller: widget.controller,
+        obscureText: _obscureText,
         style: TextStyle(color: colorScheme.onSurfaceVariant),
         decoration: InputDecoration(
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: TextStyle(
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
-          prefixIcon: Icon(icon, color: colorScheme.primary, size: 22),
+          prefixIcon: Icon(widget.icon, color: colorScheme.primary, size: 22),
+          suffixIcon: widget.isPassword
+              ? IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                    color: colorScheme.primary.withValues(alpha: 0.7),
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
+              : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
