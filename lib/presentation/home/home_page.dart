@@ -19,41 +19,44 @@ class HomePage extends GetView<HomeController> {
         physics: const ClampingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 180.0,
+            expandedHeight: 140.0,
             floating: true,
             pinned: true,
             backgroundColor: Theme.of(context).colorScheme.surface,
+            elevation: 0,
+            title: Text(
+              'home'.tr,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            centerTitle: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.favorite, color: Colors.red),
+                tooltip: 'favorites'.tr,
+                onPressed: () => Get.toNamed('/favorites'),
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                tooltip: 'settings'.tr,
+                onPressed: () => Get.toNamed('/settings'),
+              ),
+              const SizedBox(width: 8),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     child: _buildSearchBar(context),
                   ),
                 ],
               ),
-              title: Text(
-                'home'.tr,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              centerTitle: false,
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 85),
             ),
-            actions: [
-              TextButton.icon(
-                icon: const Icon(Icons.favorite, size: 20, color: Colors.red),
-                label: Text('favorites'.tr, style: const TextStyle(fontWeight: FontWeight.bold)),
-                onPressed: () => Get.toNamed('/favorites'),
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => Get.toNamed('/settings'),
-              ),
-            ],
           ),
           
           Obx(() {
@@ -101,18 +104,18 @@ class HomePage extends GetView<HomeController> {
 
   Widget _buildSearchBar(BuildContext context) {
     return Container(
-      height: 50,
+      height: 48,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
         onChanged: controller.onSearchChanged,
         decoration: InputDecoration(
           hintText: 'search_hint'.tr,
-          prefixIcon: const Icon(Icons.search),
+          prefixIcon: const Icon(Icons.search, size: 20),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
       ),
     );
@@ -120,12 +123,7 @@ class HomePage extends GetView<HomeController> {
 
   Widget _buildSearchResults(BuildContext context, int crossAxisCount) {
     final results = controller.filteredPokemon;
-    
-    if (results.isEmpty) {
-      return SliverFillRemaining(
-        child: _buildEmptyState(),
-      );
-    }
+    if (results.isEmpty) return SliverFillRemaining(child: _buildEmptyState());
 
     return SliverPadding(
       padding: const EdgeInsets.all(16),

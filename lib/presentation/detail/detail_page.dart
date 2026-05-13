@@ -100,6 +100,10 @@ class DetailPage extends GetView<DetailController> {
             pinned: true,
             backgroundColor: themeColor,
             elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Get.back(),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [

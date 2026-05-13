@@ -19,7 +19,8 @@ class FavoritesPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Obx(() {
-        final results = FavoritesService.to.favorites;
+        // Accessing the list explicitly to trigger reactivity
+        final results = FavoritesService.to.favorites.toList();
         
         if (results.isEmpty) {
           return Center(
@@ -38,6 +39,7 @@ class FavoritesPage extends StatelessWidget {
         }
 
         return AnimationLimiter(
+          key: ValueKey(results.length), // Key ensures fresh animation on count change
           child: GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
