@@ -3,15 +3,17 @@ class PokemonDetailModel {
   final String name;
   final int height;
   final int weight;
-  final List<PokemonType> types;
-  final List<PokemonStat> stats;
-  final List<PokemonAbility> abilities;
+  final int baseExperience;
+  final List<PokemonTypeModel> types;
+  final List<PokemonStatModel> stats;
+  final List<PokemonAbilityModel> abilities;
 
   PokemonDetailModel({
     required this.id,
     required this.name,
     required this.height,
     required this.weight,
+    required this.baseExperience,
     required this.types,
     required this.stats,
     required this.abilities,
@@ -23,49 +25,58 @@ class PokemonDetailModel {
       name: json['name'],
       height: json['height'],
       weight: json['weight'],
+      baseExperience: json['base_experience'] ?? 0,
       types: (json['types'] as List)
-          .map((i) => PokemonType.fromJson(i))
+          .map((i) => PokemonTypeModel.fromJson(i))
           .toList(),
       stats: (json['stats'] as List)
-          .map((i) => PokemonStat.fromJson(i))
+          .map((i) => PokemonStatModel.fromJson(i))
           .toList(),
       abilities: (json['abilities'] as List)
-          .map((i) => PokemonAbility.fromJson(i))
+          .map((i) => PokemonAbilityModel.fromJson(i))
           .toList(),
     );
   }
 
+  String get formattedId => '#${id.toString().padLeft(3, '0')}';
   String get imageUrl =>
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
-
-  // Helper to get formatted ID like #001
-  String get formattedId => '#${id.toString().padLeft(3, '0')}';
 }
 
-class PokemonType {
+class PokemonTypeModel {
   final String name;
-  PokemonType({required this.name});
-  factory PokemonType.fromJson(Map<String, dynamic> json) {
-    return PokemonType(name: json['type']['name']);
+
+  PokemonTypeModel({required this.name});
+
+  factory PokemonTypeModel.fromJson(Map<String, dynamic> json) {
+    return PokemonTypeModel(
+      name: json['type']['name'],
+    );
   }
 }
 
-class PokemonStat {
+class PokemonStatModel {
   final String name;
   final int value;
-  PokemonStat({required this.name, required this.value});
-  factory PokemonStat.fromJson(Map<String, dynamic> json) {
-    return PokemonStat(
+
+  PokemonStatModel({required this.name, required this.value});
+
+  factory PokemonStatModel.fromJson(Map<String, dynamic> json) {
+    return PokemonStatModel(
       name: json['stat']['name'],
       value: json['base_stat'],
     );
   }
 }
 
-class PokemonAbility {
+class PokemonAbilityModel {
   final String name;
-  PokemonAbility({required this.name});
-  factory PokemonAbility.fromJson(Map<String, dynamic> json) {
-    return PokemonAbility(name: json['ability']['name']);
+
+  PokemonAbilityModel({required this.name});
+
+  factory PokemonAbilityModel.fromJson(Map<String, dynamic> json) {
+    return PokemonAbilityModel(
+      name: json['ability']['name'],
+    );
   }
 }

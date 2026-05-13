@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
-import 'package:pokemon_explorer/services/auth_service.dart';
+import 'package:pokemon_explorer/presentation/widgets/section_header.dart';
+import 'package:pokemon_explorer/presentation/settings/widgets/user_profile_card.dart';
+import 'package:pokemon_explorer/presentation/settings/widgets/about_app_card.dart';
+import 'settings_controller.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends GetView<SettingsController> {
   const SettingsPage({super.key});
 
   @override
@@ -17,115 +20,37 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 40),
         children: [
           // User Section
-          _buildSectionHeader(context, 'user'.tr),
-          Obx(() => ListTile(
-            leading: const CircleAvatar(
-              child: Icon(Icons.person),
-            ),
-            title: Text(AuthService.to.userName.value),
-            subtitle: const Text('Entrenador Pokémon'),
-            trailing: IconButton(
-              icon: const Icon(Icons.logout, color: Colors.red),
-              onPressed: () => AuthService.to.logout(),
-            ),
+          const SectionHeader(title: 'Usuario'),
+          Obx(() => UserProfileCard(
+            userName: controller.userName,
+            onLogout: () => controller.logout(),
           )),
           const Divider(),
 
           // Appearance Section
-          _buildSectionHeader(context, 'theme'.tr),
+          SectionHeader(title: 'theme'.tr),
           _buildThemeToggle(),
-          
-          // Accent Color Picker
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                const Text('Color de Acento', style: TextStyle(fontWeight: FontWeight.w500)),
-                const Spacer(),
-                Wrap(
-                  spacing: 8,
-                  children: [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple].map((color) {
-                    return Obx(() => GestureDetector(
-                      onTap: () => SettingsService.to.updateAccentColor(color),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          border: SettingsService.to.accentColor.value == color.value
-                              ? Border.all(color: Colors.white, width: 2)
-                              : null,
-                        ),
-                      ),
-                    ));
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
+          _buildAccentColorPicker(context),
           const Divider(),
 
-          // Grid Configuration
-          _buildSectionHeader(context, 'Layout'),
-          Obx(() => ListTile(
-            leading: const Icon(Icons.grid_view),
-            title: const Text('Columnas en Rejilla'),
-            subtitle: Text(SettingsService.to.gridColumns == 0 ? 'Automático' : '${SettingsService.to.gridColumns} Columnas'),
-            trailing: DropdownButton<int>(
-              value: SettingsService.to.gridColumns,
-              underline: const SizedBox(),
-              items: const [
-                DropdownMenuItem(value: 0, child: Text('Auto')),
-                DropdownMenuItem(value: 2, child: Text('2')),
-                DropdownMenuItem(value: 3, child: Text('3')),
-                DropdownMenuItem(value: 4, child: Text('4')),
-              ],
-              onChanged: (val) => SettingsService.to.updateGridColumns(val!),
-            ),
-          )),
+          // Layout Section
+          const SectionHeader(title: 'Layout'),
+          _buildGridSelector(),
           const Divider(),
 
           // Language Section
-          _buildSectionHeader(context, 'language'.tr),
+          SectionHeader(title: 'language'.tr),
           _buildLanguageOption(context, 'Español', const Locale('es', 'ES'), '🇪🇸'),
           _buildLanguageOption(context, 'English', const Locale('en', 'US'), '🇺🇸'),
           const Divider(),
 
-          // About the App
-          _buildSectionHeader(context, 'Sobre esta App'),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 0,
-              color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              child: const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Icon(Icons.code, size: 40),
-                    SizedBox(height: 12),
-                    Text(
-                      'Este proyecto es una demostración técnica diseñada para mostrar conocimientos avanzados en Flutter, GetX y arquitectura limpia. Incluye manejo de estado global, persistencia local, diseños adaptativos e integraciones de API.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(height: 1.5),
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Desarrollado con ❤️ para demostrar mi pasión por el código de alta calidad.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // About Section
+          const SectionHeader(title: 'Sobre esta App'),
+          const AboutAppCard(),
           
           const Center(
             child: Text(
-              'Pokémon Explorer v1.0.0',
+              'Pokémon Explorer v1.1.0',
               style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ),
@@ -148,19 +73,54 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title) {
+  Widget _buildAccentColorPicker(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: SettingsService.to.accentColor,
-          letterSpacing: 1.2,
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          const Text('Color de Acento', style: TextStyle(fontWeight: FontWeight.w500)),
+          const Spacer(),
+          Wrap(
+            spacing: 8,
+            children: [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple].map((color) {
+              return Obx(() => GestureDetector(
+                onTap: () => SettingsService.to.updateAccentColor(color),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                    border: SettingsService.to.accentColor.value == color.value
+                        ? Border.all(color: Colors.white, width: 2)
+                        : null,
+                  ),
+                ),
+              ));
+            }).toList(),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildGridSelector() {
+    return Obx(() => ListTile(
+      leading: const Icon(Icons.grid_view),
+      title: const Text('Columnas en Rejilla'),
+      subtitle: Text(SettingsService.to.gridColumns == 0 ? 'Automático' : '${SettingsService.to.gridColumns} Columnas'),
+      trailing: DropdownButton<int>(
+        value: SettingsService.to.gridColumns,
+        underline: const SizedBox(),
+        items: const [
+          DropdownMenuItem(value: 0, child: Text('Auto')),
+          DropdownMenuItem(value: 2, child: Text('2')),
+          DropdownMenuItem(value: 3, child: Text('3')),
+          DropdownMenuItem(value: 4, child: Text('4')),
+        ],
+        onChanged: (val) => SettingsService.to.updateGridColumns(val!),
+      ),
+    ));
   }
 
   Widget _buildLanguageOption(BuildContext context, String name, Locale locale, String flag) {

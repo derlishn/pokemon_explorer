@@ -1,27 +1,24 @@
 import 'package:get/get.dart';
-import 'package:pokemon_explorer/presentation/detail/detail_binding.dart';
-import 'package:pokemon_explorer/presentation/detail/detail_page.dart';
 import 'package:pokemon_explorer/presentation/home/home_binding.dart';
 import 'package:pokemon_explorer/presentation/home/home_page.dart';
 import 'package:pokemon_explorer/presentation/login/login_binding.dart';
 import 'package:pokemon_explorer/presentation/login/login_page.dart';
 import 'package:pokemon_explorer/presentation/splash/splash_binding.dart';
 import 'package:pokemon_explorer/presentation/splash/splash_page.dart';
+import 'package:pokemon_explorer/presentation/detail/detail_binding.dart';
+import 'package:pokemon_explorer/presentation/detail/detail_page.dart';
 import 'package:pokemon_explorer/presentation/favorites/favorites_page.dart';
+import 'package:pokemon_explorer/presentation/favorites/favorites_binding.dart';
 import 'package:pokemon_explorer/presentation/settings/settings_page.dart';
-import 'package:pokemon_explorer/routes/auth_middleware.dart';
+import 'package:pokemon_explorer/presentation/settings/settings_binding.dart';
+import 'auth_middleware.dart';
 
-class AppRoutes {
-  static const String SPLASH = '/';
-  static const String LOGIN = '/login';
-  static const String HOME = '/home';
-  static const String DETAIL = '/detail';
-  static const String FAVORITES = '/favorites';
-  static const String SETTINGS = '/settings';
-}
+part 'app_routes.dart';
 
 class AppPages {
-  static final List<GetPage> routes = [
+  static const INITIAL = AppRoutes.SPLASH;
+
+  static final routes = [
     GetPage(
       name: AppRoutes.SPLASH,
       page: () => const SplashPage(),
@@ -42,14 +39,19 @@ class AppPages {
       name: AppRoutes.DETAIL,
       page: () => const DetailPage(),
       binding: DetailBinding(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: AppRoutes.FAVORITES,
       page: () => const FavoritesPage(),
+      binding: FavoritesBinding(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: AppRoutes.SETTINGS,
       page: () => const SettingsPage(),
+      binding: SettingsBinding(),
+      middlewares: [AuthMiddleware()],
     ),
   ];
 }
