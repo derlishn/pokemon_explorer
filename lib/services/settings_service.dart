@@ -11,9 +11,13 @@ class SettingsService extends GetxService {
   // Reactive states
   final RxBool _isDarkMode = false.obs;
   final Rx<Locale> _locale = const Locale('en', 'US').obs;
+  final RxInt _gridColumns = 0.obs; // 0 = Auto
+  final RxInt _accentColorValue = Colors.red.value.obs;
 
   bool get isDarkMode => _isDarkMode.value;
   Locale get locale => _locale.value;
+  int get gridColumns => _gridColumns.value;
+  Color get accentColor => Color(_accentColorValue.value);
 
   ThemeMode get themeMode {
     final bool? isDark = _box.read(AppConstants.keyIsDarkMode);
@@ -22,8 +26,9 @@ class SettingsService extends GetxService {
   }
 
   Future<SettingsService> init() async {
-    // Initialize reactive states from storage
     _isDarkMode.value = _box.read(AppConstants.keyIsDarkMode) ?? false;
+    _gridColumns.value = _box.read('grid_columns') ?? 0;
+    _accentColorValue.value = _box.read('accent_color') ?? Colors.red.value;
     
     final String? langCode = _box.read(AppConstants.keyLanguage);
     if (langCode != null) {
@@ -45,5 +50,17 @@ class SettingsService extends GetxService {
     _locale.value = newLocale;
     Get.updateLocale(newLocale);
     _box.write(AppConstants.keyLanguage, newLocale.languageCode);
+  }
+
+  void updateGridColumns(int count) {
+    _gridColumns.value = count;
+    _box.write('grid_columns', count);
+  }
+
+  void updateAccentColor(Color color) {
+    _accentColorValue.value = color.value;
+    _box.write('accent_color', color.value);
+    // Force a theme refresh if needed
+    Get.forceAppUpdate();
   }
 }

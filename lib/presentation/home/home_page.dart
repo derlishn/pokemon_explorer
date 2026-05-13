@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
+import 'package:pokemon_explorer/services/settings_service.dart';
 import 'home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -11,9 +12,6 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final int crossAxisCount = width > 1200 ? 6 : (width > 600 ? 4 : 2);
-
     return Scaffold(
       body: CustomScrollView(
         physics: const ClampingScrollPhysics(),
@@ -60,6 +58,13 @@ class HomePage extends GetView<HomeController> {
           ),
           
           Obx(() {
+            final width = MediaQuery.of(context).size.width;
+            // Use manual setting if it's not 0, otherwise use adaptive logic
+            final manualColumns = SettingsService.to.gridColumns;
+            final int crossAxisCount = manualColumns > 0 
+                ? manualColumns 
+                : (width > 1200 ? 6 : (width > 600 ? 4 : 2));
+
             if (controller.isSearching.value) {
               return _buildSearchResults(context, crossAxisCount);
             }
@@ -67,6 +72,7 @@ class HomePage extends GetView<HomeController> {
             return SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: PagedSliverGrid<int, PokemonListItemModel>(
+                key: ValueKey('grid_$crossAxisCount'), // Force grid refresh on column change
                 pagingController: controller.pagingController,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
@@ -128,6 +134,7 @@ class HomePage extends GetView<HomeController> {
     return SliverPadding(
       padding: const EdgeInsets.all(16),
       sliver: SliverGrid(
+        key: ValueKey('search_$crossAxisCount'),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: 16,
