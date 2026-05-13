@@ -1,6 +1,17 @@
 class ApiConstants {
   static const String baseUrl = 'https://pokeapi.co/api/v2';
   
+  // Timeouts
+  static const int receiveTimeout = 45; // seconds
+  static const int connectTimeout = 45; // seconds
+  
+  // Endpoints
+  static const String pokemonEndpoint = '/pokemon';
+  
+  // Query Parameters
+  static const String paramLimit = 'limit';
+  static const String paramOffset = 'offset';
+  
   // JSON Keys
   static const String keyId = 'id';
   static const String keyName = 'name';

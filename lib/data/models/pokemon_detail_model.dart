@@ -1,6 +1,7 @@
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/helpers/api_constants.dart';
 
+/// Represents the full data of a Pokemon including stats and abilities
 class PokemonDetailModel {
   final int id;
   final String name;
@@ -22,6 +23,7 @@ class PokemonDetailModel {
     required this.abilities,
   });
 
+  /// Factory constructor for detailed data from API
   factory PokemonDetailModel.fromJson(Map<String, dynamic> json) {
     return PokemonDetailModel(
       id: json[ApiConstants.keyId],
@@ -41,7 +43,7 @@ class PokemonDetailModel {
     );
   }
 
-  /// Helper to create a partial detail from a list item (cached types)
+  /// Helper to create a placeholder detail model from a list item
   factory PokemonDetailModel.fromListItem(PokemonListItemModel item) {
     return PokemonDetailModel(
       id: item.id,
@@ -59,6 +61,7 @@ class PokemonDetailModel {
   String get imageUrl => ApiConstants.pokemonImageUrl(id);
 }
 
+/// Simplified type model for nested JSON parsing
 class PokemonTypeModel {
   final String name;
 
@@ -71,6 +74,7 @@ class PokemonTypeModel {
   }
 }
 
+/// Simplified stat model for nested JSON parsing
 class PokemonStatModel {
   final String name;
   final int value;
@@ -85,6 +89,7 @@ class PokemonStatModel {
   }
 }
 
+/// Simplified ability model for nested JSON parsing
 class PokemonAbilityModel {
   final String name;
 

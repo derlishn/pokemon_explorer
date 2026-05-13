@@ -43,6 +43,10 @@ class AppTranslations extends Translations {
           'about': 'About',
           'entrenador_pokemon': 'Pokémon Trainer',
           'about_app_desc': 'This project is a technical demonstration designed to show advanced knowledge in Flutter, GetX and clean architecture. It includes global state management, local persistence, adaptive designs and API integrations.',
+          'error_timeout': 'Connection timed out',
+          'check_internet_connection': 'Please check your internet connection',
+          'bad_request': 'Invalid request to server',
+          'unauthorized': 'Unauthorized access',
           'dev_signature': 'Developed with ❤️ to demonstrate my passion for high quality code.',
         },
         'es_ES': {
@@ -85,6 +89,10 @@ class AppTranslations extends Translations {
           'about': 'Sobre el Pokémon',
           'entrenador_pokemon': 'Entrenador Pokémon',
           'about_app_desc': 'Este proyecto es una demostración técnica diseñada para mostrar conocimientos avanzados en Flutter, GetX y arquitectura limpia. Incluye manejo de estado global, persistencia local, diseños adaptativos e integraciones de API.',
+          'error_timeout': 'Se agotó el tiempo de espera',
+          'check_internet_connection': 'Por favor, verifica tu conexión a internet',
+          'bad_request': 'Solicitud inválida al servidor',
+          'unauthorized': 'Acceso no autorizado',
           'dev_signature': 'Desarrollado con ❤️ para demostrar mi pasión por el código de alta calidad.',
         },
       };

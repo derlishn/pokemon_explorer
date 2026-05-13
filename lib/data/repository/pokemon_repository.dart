@@ -1,37 +1,39 @@
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pokemon_explorer/data/models/pokemon_list_model.dart';
 import 'package:pokemon_explorer/data/models/pokemon_detail_model.dart';
 import 'package:pokemon_explorer/helpers/api_constants.dart';
+import 'package:pokemon_explorer/data/network/api_client.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 
+/// Repository for handling Pokemon data from API and Local Storage
 class PokemonRepository {
-  final _connect = GetConnect();
+  final ApiClient apiClient;
   final _cache = GetStorage();
   static const String _cachePrefix = 'pokemon_item_';
 
-  /// Fetches the base list as fast as possible
+  PokemonRepository({required this.apiClient});
+
+  /// Fetches the base Pokemon list from remote source
   Future<List<PokemonListItemModel>> getAllPokemon({int limit = 20, int offset = 0}) async {
     try {
-      final response = await _connect.get(
-        '${ApiConstants.baseUrl}/pokemon',
-        query: {'limit': limit.toString(), 'offset': offset.toString()},
-      ).timeout(const Duration(seconds: 15));
-
-      if (response.status.hasError) {
-        return _handleError(response);
-      }
+      final response = await apiClient.safeGet(
+        ApiConstants.pokemonEndpoint,
+        query: {
+          ApiConstants.paramLimit: limit.toString(),
+          ApiConstants.paramOffset: offset.toString()
+        },
+      );
 
       final List results = response.body[ApiConstants.keyResults];
       return results.map((e) => PokemonListItemModel.fromJson(e)).toList();
     } catch (e) {
-      throw Exception('error_network'.tr);
+      rethrow;
     }
   }
 
-  /// Fetches detail for a single pokemon, checking cache first
+  /// Fetches Pokemon details, checking local cache before network call
   Future<PokemonDetailModel> getPokemonDetail(int id, {String? name}) async {
-    // Check cache ONLY if enabled in settings
+    // Return cached data if available and enabled
     if (SettingsService.to.useCache && name != null) {
       final cachedData = _cache.read(_cachePrefix + name);
       if (cachedData != null) {
@@ -40,20 +42,15 @@ class PokemonRepository {
     }
 
     try {
-      final response = await _connect.get('${ApiConstants.baseUrl}/pokemon/$id')
-          .timeout(const Duration(seconds: 10));
-
-      if (response.status.hasError) {
-        return _handleError(response);
-      }
+      final response = await apiClient.safeGet('${ApiConstants.pokemonEndpoint}/$id');
 
       final detail = PokemonDetailModel.fromJson(response.body);
       
-      // Save basic info to cache ONLY if enabled in settings
+      // Persist basic info to cache for offline availability
       if (SettingsService.to.useCache && name != null) {
         final item = PokemonListItemModel(
           name: name,
-          url: '${ApiConstants.baseUrl}/pokemon/$id/',
+          url: '${ApiConstants.baseUrl}${ApiConstants.pokemonEndpoint}/$id/',
           types: detail.types.map((t) => t.name).toList(),
         );
         await _cache.write(_cachePrefix + name, item.toJson());
@@ -61,19 +58,7 @@ class PokemonRepository {
 
       return detail;
     } catch (e) {
-      throw Exception('error_network'.tr);
-    }
-  }
-
-  dynamic _handleError(Response response) {
-    if (response.status.isNotFound) {
-      throw Exception('pokemon_not_found'.tr);
-    } else if (response.status.connectionError) {
-      throw Exception('error_network'.tr);
-    } else if (response.status.isServerError) {
-      throw Exception('error_server'.tr);
-    } else {
-      throw Exception('error_unknown'.tr);
+      rethrow;
     }
   }
 }

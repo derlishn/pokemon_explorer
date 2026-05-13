@@ -1,5 +1,6 @@
 import 'package:pokemon_explorer/helpers/api_constants.dart';
 
+/// Represents a basic Pokemon item used in lists and pagination
 class PokemonListItemModel {
   final String name;
   final String url;
@@ -11,6 +12,7 @@ class PokemonListItemModel {
     this.types = const [],
   });
 
+  /// Factory constructor for creating a model from API JSON response
   factory PokemonListItemModel.fromJson(Map<String, dynamic> json) {
     return PokemonListItemModel(
       name: json[ApiConstants.keyName],
@@ -21,6 +23,7 @@ class PokemonListItemModel {
     );
   }
 
+  /// Converts the model back to JSON for local persistence
   Map<String, dynamic> toJson() {
     return {
       ApiConstants.keyName: name,
@@ -29,11 +32,13 @@ class PokemonListItemModel {
     };
   }
 
+  /// Extracts the Pokemon ID from the detail URL
   int get id {
     final parts = url.split('/');
     return int.parse(parts[parts.length - 2]);
   }
 
+  /// Get the official artwork URL based on ID
   String get imageUrl => ApiConstants.pokemonImageUrl(id);
 
   PokemonListItemModel copyWith({List<String>? types}) {
