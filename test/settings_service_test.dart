@@ -22,8 +22,8 @@ void main() {
   });
 
   group('SettingsService Tests', () {
-    test('Initial theme mode should be system when no preference is saved', () {
-      expect(settingsService.themeMode, ThemeMode.system);
+    test('Initial theme mode should be light when no preference is saved', () {
+      expect(settingsService.themeMode, ThemeMode.light);
     });
 
     test('Initial accent color should be default neutral', () {

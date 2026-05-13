@@ -27,7 +27,7 @@ class LoginController extends GetxController {
   }
 
   void login() {
-    FocusScope.of(Get.context!).unfocus();
+    if (Get.context != null) FocusScope.of(Get.context!).unfocus();
 
     final user = userController.text.trim();
     final pass = passwordController.text.trim();
