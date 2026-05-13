@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/features/pokemon/data/repositories/pokemon_repository.dart';
+import 'package:pokemon_explorer/services/connectivity_service.dart';
 import 'dart:async';
 
 class HomeController extends GetxController {
@@ -28,6 +29,13 @@ class HomeController extends GetxController {
     });
     
     ever(searchQuery, (_) => _onSearchChanged());
+    
+    // Auto-retry when connection returns
+    ever(ConnectivityService.to.isConnectedRx, (bool connected) {
+      if (connected && pagingController.error != null) {
+        pagingController.retryLastFailedRequest();
+      }
+    });
   }
 
   Future<void> _fetchPage(int pageKey) async {

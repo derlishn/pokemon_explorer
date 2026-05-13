@@ -67,6 +67,10 @@ class AppTranslations extends Translations {
           TranslationKeys.unauthorized: 'Unauthorized access',
           TranslationKeys.devSignature:
               'Developed with ❤️ to demonstrate my passion for high quality code.',
+          TranslationKeys.noConnectionTitle: 'No Connection',
+          TranslationKeys.noConnectionSubtitle: 'Please check your internet',
+          TranslationKeys.loadingLocalData: 'Loading local data...',
+          TranslationKeys.noCacheAvailable: 'No cached Pokémon available yet.',
         },
         'es_ES': {
           TranslationKeys.appName: 'Explorador Pokémon',
@@ -132,6 +136,10 @@ class AppTranslations extends Translations {
           TranslationKeys.unauthorized: 'Acceso no autorizado',
           TranslationKeys.devSignature:
               'Desarrollado con ❤️ para demostrar mi pasión por el código de alta calidad.',
+          TranslationKeys.noConnectionTitle: 'Sin Conexión',
+          TranslationKeys.noConnectionSubtitle: 'Verifica tu internet',
+          TranslationKeys.loadingLocalData: 'Cargando datos locales...',
+          TranslationKeys.noCacheAvailable: 'Aún no tienes Pokémon en caché.',
         },
       };
 }

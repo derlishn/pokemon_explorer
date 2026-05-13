@@ -58,4 +58,8 @@ class TranslationKeys {
   static const String badRequest = 'bad_request';
   static const String unauthorized = 'unauthorized';
   static const String devSignature = 'dev_signature';
+  static const String noConnectionTitle = 'no_connection_title';
+  static const String noConnectionSubtitle = 'no_connection_subtitle';
+  static const String loadingLocalData = 'loading_local_data';
+  static const String noCacheAvailable = 'no_cache_available';
 }

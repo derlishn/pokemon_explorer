@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/core/widgets/empty_state.dart';
+import 'package:pokemon_explorer/core/widgets/error_state.dart';
 import 'package:pokemon_explorer/core/widgets/pokemon_card.dart';
 import 'package:pokemon_explorer/core/utils/hero_tags.dart';
 import 'package:pokemon_explorer/core/constants/constants.dart';
@@ -56,9 +58,22 @@ class PokemonPagedGrid extends StatelessWidget {
             );
           },
           noItemsFoundIndicatorBuilder: (_) => const EmptyState(),
-          firstPageProgressIndicatorBuilder: (_) => const Center(
-            child: CircularProgressIndicator(),
+          firstPageErrorIndicatorBuilder: (context) => ErrorState(
+            message: pagingController.error.toString(),
+            onRetry: () => pagingController.retryLastFailedRequest(),
           ),
+          newPageErrorIndicatorBuilder: (context) => Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: TextButton.icon(
+                onPressed: () => pagingController.retryLastFailedRequest(),
+                icon: const Icon(Icons.refresh),
+                label: Text(TranslationKeys.retry.tr),
+              ),
+            ),
+          ),
+          firstPageProgressIndicatorBuilder: (_) =>
+              const Center(child: CircularProgressIndicator()),
           newPageProgressIndicatorBuilder: (_) => const Center(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 20),

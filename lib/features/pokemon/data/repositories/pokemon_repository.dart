@@ -1,4 +1,6 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:pokemon_explorer/core/constants/error_constants.dart';
+import 'package:pokemon_explorer/core/constants/translation_keys.dart';
 import 'package:pokemon_explorer/core/error/failure.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
 import 'package:pokemon_explorer/core/config/api_config.dart';
@@ -17,11 +19,12 @@ class PokemonRepository {
 
   PokemonRepository({required this.apiClient, required this.storageService});
 
-  /// Fetches the base Pokemon list from remote source
   Future<Either<Failure, List<PokemonListItemModel>>> getAllPokemon({
     int limit = 20,
     int offset = 0,
   }) async {
+    final String listCacheKey = '${AppConstants.keyPokemonListPrefix}$offset';
+
     try {
       final response = await apiClient.safeGet(
         ApiEndpoints.pokemon,
@@ -31,17 +34,68 @@ class PokemonRepository {
         },
       );
 
-      final List results = response.body[ApiKeys.results];
-      final list = results
-          .map((e) => PokemonListItemModel.fromJson(e))
-          .toList();
-      return Right(list);
-    } on NoInternetException catch (e) {
-      return Left(ConnectionFailure(e.errorCode));
-    } on NetworkException catch (e) {
-      return Left(ServerFailure(e.errorCode, e.statusCode));
+      // Si la respuesta es exitosa, procesamos y cacheamos
+      if (response.body != null && response.body is Map) {
+        final List? results = response.body[ApiKeys.results];
+        if (results != null) {
+          final list = results.map((e) => PokemonListItemModel.fromJson(Map<String, dynamic>.from(e))).toList();
+          
+          if (SettingsService.to.useCache) {
+            await storageService.write(listCacheKey, response.body);
+          }
+          return Right(list);
+        }
+      }
+      
+      throw Exception('Invalid Response Structure');
     } catch (e) {
-      return Left(UnknownFailure(e.toString()));
+      // FALLBACK UNIVERSAL: Si algo falla (red, servidor, parseo), forzamos caché
+      if (SettingsService.to.useCache) {
+        // 1. Intentar con la lista cacheada de la página específica
+        final cachedData = storageService.read(listCacheKey);
+        if (cachedData != null && cachedData is Map) {
+          final List? results = cachedData[ApiKeys.results];
+          if (results != null) {
+            try {
+              final list = results.map((e) => 
+                PokemonListItemModel.fromJson(Map<String, dynamic>.from(e))
+              ).toList();
+              return Right(list);
+            } catch (_) {}
+          }
+        }
+
+        // 2. HARDCORE FALLBACK: Reconstruir desde los items individuales visitados (tus 21 pokemons)
+        if (offset == 0) {
+          final allKeys = storageService.getKeys();
+          final List<PokemonListItemModel> reconstructedList = [];
+          
+          for (var key in allKeys) {
+            final k = key.toString();
+            // Evitamos las llaves de listas y detalles completos, buscamos solo los items básicos
+            if (k.startsWith(AppConstants.pokemonCachePrefix) && !k.contains('list_page_')) {
+              final itemData = storageService.read(k);
+              if (itemData != null && itemData is Map) {
+                try {
+                  reconstructedList.add(
+                    PokemonListItemModel.fromJson(Map<String, dynamic>.from(itemData))
+                  );
+                } catch (_) {}
+              }
+            }
+          }
+
+          if (reconstructedList.isNotEmpty) {
+            return Right(reconstructedList);
+          }
+        }
+      }
+      
+      // Si no hay absolutamente nada en caché, devolvemos el error correspondiente
+      if (e is NoInternetException) {
+        return const Left(ConnectionFailure(TranslationKeys.noCacheAvailable));
+      }
+      return const Left(ServerFailure(ErrorConstants.errorServer));
     }
   }
 
@@ -70,7 +124,7 @@ class PokemonRepository {
       if (SettingsService.to.useCache) {
         // Cache full detail
         await storageService.write(fullCacheKey, response.body);
-        
+
         // Cache/Update basic info for list performance
         if (name != null) {
           final item = PokemonListItemModel(

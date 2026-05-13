@@ -7,6 +7,7 @@ import 'package:pokemon_explorer/core/storage/secure_storage_service.dart';
 import 'package:pokemon_explorer/services/auth_service.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
 import 'package:pokemon_explorer/services/favorites_service.dart';
+import 'package:pokemon_explorer/services/connectivity_service.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
@@ -38,5 +39,6 @@ class DependencyInjection {
     ).init());
     
     await Get.putAsync(() => FavoritesService(storageService: storage).init());
+    await Get.putAsync(() => ConnectivityService().init());
   }
 }
