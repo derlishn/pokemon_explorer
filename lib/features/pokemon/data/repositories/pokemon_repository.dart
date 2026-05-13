@@ -50,7 +50,7 @@ class PokemonRepository {
     int id, {
     String? name,
   }) async {
-    final String cacheKey = '${AppConstants.keyPokemonCachePrefix}$name';
+    final String cacheKey = '${AppConstants.pokemonCachePrefix}$name';
 
     // Return cached data if available and enabled
     if (SettingsService.to.useCache && name != null) {

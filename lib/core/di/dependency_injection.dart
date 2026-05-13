@@ -10,32 +10,33 @@ import 'package:pokemon_explorer/services/favorites_service.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
-    // Services
+    // 1. Foundation Infrastructure (Immediate)
     final storage = StorageService();
     final secureStorage = SecureStorageService();
     
-    await Get.putAsync(() => SettingsService().init());
     Get.put(storage);
     Get.put(secureStorage);
     
-    // Repositories
+    // 2. Global Settings (Critical for UI Theme/Locale)
+    await Get.putAsync(() => SettingsService(storageService: storage).init());
+    
+    // 3. Repositories (Data Access)
     final authRepo = AuthRepository(secureStorage: secureStorage);
     Get.put(authRepo);
     
+    Get.put(ApiClient());
+    
+    Get.lazyPut(() => PokemonRepository(
+      apiClient: Get.find(),
+      storageService: storage,
+    ));
+    
+    // 4. State Management Services (Business Logic)
     await Get.putAsync(() => AuthService(
       authRepository: authRepo,
       storageService: storage,
     ).init());
     
-    await Get.putAsync(() => FavoritesService().init());
-
-    // Network
-    Get.put(ApiClient());
-
-    // Repositories
-    Get.lazyPut(() => PokemonRepository(
-      apiClient: Get.find(),
-      storageService: storage,
-    ));
+    await Get.putAsync(() => FavoritesService(storageService: storage).init());
   }
 }

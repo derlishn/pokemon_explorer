@@ -1,19 +1,22 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:pokemon_explorer/features/pokemon/data/models/pokemon_models.dart';
+import 'package:pokemon_explorer/core/storage/storage_service.dart';
+import 'package:pokemon_explorer/core/constants/constants.dart';
 
 class FavoritesService extends GetxService {
   static FavoritesService get to => Get.find();
   
-  final _storage = GetStorage();
-  final _key = 'favorites_objects_list';
+  final StorageService storageService;
+  
+  FavoritesService({required this.storageService});
   
   // Reactive list of full Pokemon objects
   final favorites = <PokemonListItemModel>[].obs;
 
   Future<FavoritesService> init() async {
-    // Load saved favorites from storage
-    final List<dynamic>? savedData = _storage.read<List<dynamic>>(_key);
+    // Load saved favorites from storage using central StorageService
+    final List<dynamic>? savedData = storageService.read<List<dynamic>>(AppConstants.keyFavorites);
+    
     if (savedData != null) {
       favorites.assignAll(
         savedData.map((e) => PokemonListItemModel.fromJson(e)).toList()
@@ -29,8 +32,12 @@ class FavoritesService extends GetxService {
     } else {
       favorites.add(pokemon);
     }
-    // Persist to storage (converting objects to JSON)
-    _storage.write(_key, favorites.map((p) => p.toJson()).toList());
+    
+    // Persist to storage using central StorageService
+    storageService.write(
+      AppConstants.keyFavorites, 
+      favorites.map((p) => p.toJson()).toList(),
+    );
   }
 
   bool isFavorite(int pokemonId) {

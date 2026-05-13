@@ -17,7 +17,7 @@ class AuthRepository {
   ) async {
     try {
       await secureStorage.write(AppConstants.keyUserName, username);
-      await secureStorage.write(AppConstants.keyPassword, password);
+      await secureStorage.write(AppConstants.keyUserPassword, password);
       return const Right(null);
     } catch (e) {
       return const Left(CacheFailure(ErrorConstants.errorUnknown));
@@ -37,7 +37,7 @@ class AuthRepository {
   /// Retrieves saved password securely
   Future<Either<Failure, String?>> getSavedPassword() async {
     try {
-      final password = await secureStorage.read(AppConstants.keyPassword);
+      final password = await secureStorage.read(AppConstants.keyUserPassword);
       return Right(password);
     } catch (e) {
       return const Left(CacheFailure(ErrorConstants.errorUnknown));

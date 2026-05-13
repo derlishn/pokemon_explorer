@@ -1,26 +1,24 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pokemon_explorer/services/settings_service.dart';
+import 'package:pokemon_explorer/core/storage/storage_service.dart';
 import 'package:flutter/material.dart';
 
-class MockGetStorage extends Mock implements GetStorage {}
+class MockStorageService extends Mock implements StorageService {}
 
 void main() {
   late SettingsService settingsService;
-  late MockGetStorage mockStorage;
-
-  setUpAll(() async {
-    // Required for GetStorage testing
-    await GetStorage.init();
-  });
+  late MockStorageService mockStorage;
 
   setUp(() {
-    mockStorage = MockGetStorage();
-    settingsService = SettingsService();
+    mockStorage = MockStorageService();
     
-    // Default mock behavior
-    when(() => mockStorage.read(any())).thenReturn(null);
+    // Default mock behavior for initialization
+    when(() => mockStorage.read<String>(any())).thenReturn(null);
+    when(() => mockStorage.read<int>(any())).thenReturn(null);
+    when(() => mockStorage.read<bool>(any())).thenReturn(null);
+    
+    settingsService = SettingsService(storageService: mockStorage);
   });
 
   group('SettingsService Tests', () {
@@ -33,11 +31,15 @@ void main() {
     });
 
     test('updateAccentColor should change the color and persist it', () async {
-      // In a real app, we'd use Get.put, but here we test the logic
       const newColor = Colors.red;
+      
+      // Mock the write behavior
+      when(() => mockStorage.write(any(), any())).thenAnswer((_) async => {});
+      
       settingsService.updateAccentColor(newColor);
       
       expect(settingsService.accentColor.toARGB32(), newColor.toARGB32());
+      verify(() => mockStorage.write(any(), any())).called(1);
     });
   });
 }

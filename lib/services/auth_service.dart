@@ -17,7 +17,7 @@ class AuthService extends GetxService {
   });
 
   final isLoggedIn = false.obs;
-  final userName = 'Guest'.obs;
+  final userName = AppConstants.defaultUserName.obs;
 
   /// Initializes auth state from persistent storage
   Future<AuthService> init() async {
@@ -26,8 +26,8 @@ class AuthService extends GetxService {
 
     final result = await authRepository.getSavedUsername();
     result.fold(
-      (failure) => userName.value = 'Guest',
-      (savedUser) => userName.value = savedUser ?? 'Guest',
+      (failure) => userName.value = AppConstants.defaultUserName,
+      (savedUser) => userName.value = savedUser ?? AppConstants.defaultUserName,
     );
 
     return this;
@@ -50,7 +50,7 @@ class AuthService extends GetxService {
   /// Handles logout logic and clears session
   Future<void> logout() async {
     isLoggedIn.value = false;
-    userName.value = 'Guest';
+    userName.value = AppConstants.defaultUserName;
 
     // Clear session and secure data
     await storageService.remove(AppConstants.keyIsLoggedIn);

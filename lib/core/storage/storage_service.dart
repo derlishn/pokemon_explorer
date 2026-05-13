@@ -1,26 +1,32 @@
 import 'package:get_storage/get_storage.dart';
 
-/// Service for handling local persistence of non-sensitive data
+/// Professional wrapper for GetStorage to allow easier testing and 
+/// infrastructure swapping in the future.
 class StorageService {
   final _box = GetStorage();
 
-  /// Writes data to local storage
   Future<void> write(String key, dynamic value) async {
     await _box.write(key, value);
   }
 
-  /// Reads data from local storage
   T? read<T>(String key) {
     return _box.read<T>(key);
   }
 
-  /// Removes data from local storage
   Future<void> remove(String key) async {
     await _box.remove(key);
   }
 
-  /// Checks if a key exists in storage
   bool hasData(String key) {
     return _box.hasData(key);
+  }
+
+  /// Exposes keys for maintenance tasks like cache clearing
+  Iterable<dynamic> getKeys() {
+    return _box.getKeys();
+  }
+
+  Future<void> clearAll() async {
+    await _box.erase();
   }
 }
